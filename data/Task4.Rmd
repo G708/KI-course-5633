@@ -1,0 +1,59 @@
+---
+title: "Task4"
+author: "Gina Oba"
+date: "2023-03-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task4
+
+1.  What is the square root of 10?
+
+```{r}
+sqrt(10)
+```
+
+2.  What is the logarithm of 32 to the base 2?
+
+```{r}
+log2(32)
+```
+
+3.  What is the sum of the numbers from 1 to 1000?
+
+```{r}
+# cerate sequence of 1 to 1000
+sum(seq(1, 1000))
+```
+
+```{r}
+# apply formula of gaussian sum
+(1+1000)*1000/2
+```
+
+4.  What is the sum of all even numbers from 2 to 1000?
+
+```{r}
+# cerate sequence even numbers from 2 to 1000
+sum(seq(2, 1000, by = 2))
+
+```
+
+5.  How many pairwise comparisons are there for 100 genes?
+
+```{r}
+choose(100,2)
+```
+
+6.  And how many ways to arrange 100 genes in triples?
+
+```{r}
+n <- 100
+k <-3
+choose(n,k) * factorial(k)
+```
+
