@@ -1,0 +1,96 @@
+---
+title: "Task6"
+author: "Gina Miku Oba"
+date: "2023-03-07"
+output: html_notebook
+---
+# Task6 - R Function
+
+## 1. A function that calculates the ratio of the mean and the median of a given vector.
+Input of the function is given vector and output of the function is the ratio of the mean and the median.
+$$
+f(x) = \frac{mean(x)}{median(x)} \\
+\text{where, }x = \{x_1, x_2, ..., x_n\}
+$$
+
+```{r}
+ratio_mean_median <- function(x){
+  return(mean(x) / median(x))
+}
+
+```
+
+Try test:
+```{r}
+# Generate a random vector of 10 components, each with a value between 0 and 1.
+vector <- runif(10, 0, 1) 
+print(vector)
+
+# print mean and median
+print(paste("mean:", mean(vector)))
+print(paste("median:", median(vector)))
+
+# print ratio of mean and median 
+result <- ratio_mean_median(vector)
+print(result)
+
+# print if function works fine
+if (result == mean(vector)/median(vector)){
+  print("Function works well")
+}else{
+  print("Function not works")
+}
+
+```
+
+## 2. A function that ignore the lowest and the hightest value from given vector and calculate the mean.
+The input to the function is a vector. The output of the function is mean. The lowest value in the function is searched for with min() and the highest value with max().
+
+```{r}
+trim_mean <- function(x){
+  min <- min(x)
+  max <- max(x)
+  # remove min and max from given vector using subset().
+  trimmed <- subset(x, x != min & x != max)
+  return(mean(trimmed))
+}
+```
+
+Try test:
+```{r}
+# Generate a random vector of 10 components, each with a value between 0 and 1.
+vector <- runif(10, 0, 1) 
+print(vector)
+print(paste("median:", median(vector)))
+
+# print mean and trim_mean
+print(paste("mean:", mean(vector)))
+print(paste("trim_mean:", trim_mean(vector)))
+
+```
+The advantage of this trimmed mean is that it is robust to outliers or the heavy tail data distribution. 
+Try vector with extreme value:
+```{r}
+# Generate a random vector of 10 components, each with a value between 0 and 1.
+vector <- runif(9, 0, 1) 
+# add extreme value 10
+vector <- append(vector, 10)
+print(vector)
+print(paste("median:", median(vector)))
+
+# print mean and trim_mean
+print(paste("mean:", mean(vector)))
+print(paste("trim_mean:", trim_mean(vector)))
+
+```
+By trimming the highest and lowest values, the trimmed mean was closer to the median.
+
+## 3. Explanation of piping usase
+Write a short (max. 300 characters, no spaces) explanation of why, how, and when not to use pipes.
+
+Pipes chain functions together and improve code readability. However, longer chains (> 10) can complicate code and should be avoided. Pipes overwrite intermediate objects, making them unsuitable for functions with multiple inputs/outputs. Additionally, pipes have limitations for functions with complex dependencies since they operate linearly.
+
+## 4. Explanation of apply-family function
+Write a short explanation (max. 300 characters, no spaces) of why they could be useful in your work.
+
+The Apply family of functions is useful for applying a function to entire dataset. Loops can create a deep hierarchy, making code difficult to read. Apply-functions can simplify code by reducing loops. They are crucial when analyzing large dataset such as gene expression matrices, streamlining the process and ensuring consistent results.

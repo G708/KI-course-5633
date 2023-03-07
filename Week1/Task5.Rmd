@@ -1,0 +1,105 @@
+---
+title: "Task5"
+author: "Gina Miku Oba"
+date: "2023-03-06"
+output: html_notebook
+---
+
+# Task5 - Using R example datasets
+
+## 1. CO2 dataset
+First, load CO2 dataset.
+```{r loading}
+data(CO2)
+# also loading library for later use
+library(tidyverse)
+```
+
+This data contains 84 observations (row) and 5 variables (column). 
+
+## 2. Contents of CO2 dataset
+```{r}
+help(CO2)
+```
+
+The CO2 dataset is from an experiment on the cold tolerance of the grass species _Echinochloa crus-galli_ from Quebec and Mississippi. This data contains 84 observations (row) and 5 variables (column). There are 3 biological replicates for each 4 condition (Quebec-nonchilled, Quebec-chilled, Mississippi-nonchilled, Mississippi-chilled). And 7 technical replicates for each sample (3 x 4 x 7 = 84). 5 variables include the unique identifier for each plant (*Plant*), the origin of the plant (*Type*),  treatment (*Treatment*, which is `nonchilled` or `chilled`), the ambient carbon dioxide concentration (*conc*), the carbon dioxide uptake rates (*uptake*) of the plant.
+
+## 3. Average and median CO2 uptake of the plants from Quebec and Misissippi.
+Functions to compute Average and median in R is as below.
+
+- average : `mean(x)`
+- median : `median(x)`
+
+```{r}
+# average(mean) and median CO2 uptake of the all plants
+CO2 %>%
+  # summarize results in table form
+    summarize( 
+      Average = mean(uptake, na.rm=TRUE),
+      Median = median(uptake, na.rm=TRUE))
+```
+
+Compute average(mean) and median CO2 uptake of the plants from Quebec and Mississippi.
+```{r}
+# average(mean) and median CO2 uptake of the plants from Quebec and Mississippi.
+CO2 %>%
+    group_by(Type) %>% # grouping data of same origin
+    # summarize results in table form
+    summarize(
+      Average = mean(uptake, na.rm=TRUE),
+      Median = median(uptake, na.rm=TRUE))
+```
+From the data, we can speculate that the plant from Quebec will have more CO2 uptake than the plant from Mississippi.
+
+## 4. [Optional] How many genes are expressed in each sample in "airway" dataset? How many genes are not expressed in any sample?
+
+To load airway dataset from Bioconductor, command is as below.
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("airway")
+
+library( "airway" )
+data("airway")
+```
+
+```{r}
+help(airway)
+airway
+```
+`airway` data is the RNA-seq read count data of airway smooth muscle cell lines, contains 64102 features of 8 samples. Matrix of read count (which row is gene, and column is sample) is able to extruct by `assay(airway)`.
+
+If read count is over 1 that gene is considered as expressed gene.
+```{r}
+# count expressed gene (read count >=1) for each sample
+as.data.frame(assay(airway)) %>% # change data format. Otherwise, it will be `Error in UseMethod("tbl_vars")`
+  summarise_all(~sum(. >= 1, na.rm = TRUE)) # count if value is >=1.
+
+```
+Average of expressed gene across samples is as below.
+```{r}
+# count expressed gene (read count >=1) for each sample
+as.data.frame(assay(airway)) %>% # change data format. Otherwise, it will be `Error in UseMethod("tbl_vars")`
+  summarise_all(~sum(. >= 1, na.rm = TRUE)) %>% # count if value is >=1.
+  # Mean of expressed gene across samples.
+  rowMeans()
+```
+
+The gene which not expressed in any sample is as below.
+```{r}
+df = as.data.frame(assay(airway))
+
+# rowSums() function to calculate the sum of each row
+# filter the data frame with the row which sum of the row is 0.
+all_zero_rows <- df[rowSums(df) == 0, ]
+print(dim(all_zero_rows))
+
+```
+
+Across sample average 24767 genes, minimun 23124 to maximum 25998 genes are expressed (read count >=1).
+And genes which is not expressed in any sample is 30633 genes.
+
+
+

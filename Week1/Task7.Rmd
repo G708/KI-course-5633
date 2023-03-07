@@ -1,0 +1,9 @@
+---
+title: "Task7"
+author: "Gina Miku Oba"
+date: "2023-03-07"
+output: html_notebook
+---
+
+# Task7 - Basic visualization with R
+
