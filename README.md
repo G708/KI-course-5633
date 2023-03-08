@@ -23,3 +23,6 @@ Use `Dev Container`s extention to open folder in container. Access `http://local
 
 ## In command line
 After run docker image, access `http://localhost:8787/` on browser and open Rstudio.
+
+# To share the notebook.
+I use R notebook to write my documents and all R notebook uploaded in Github. But maybe R notebook format is better to share as online web page and not by Github? `.Rmd` and `.nb.html` format is not able see on github repository and both `.Rmd` and `.nb.html` must be download and open on Rstudio to see visualization. 
