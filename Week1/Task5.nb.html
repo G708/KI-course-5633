@@ -1768,6 +1768,17 @@ display: none;
 # also loading library for later use
 library(tidyverse)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuMCAgICAg4pyUIHJlYWRyICAgICAyLjEuNFxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMFxu4pyUIGdncGxvdDIgICAzLjQuMSAgICAg4pyUIHRpYmJsZSAgICAzLjEuOFxu4pyUIGx1YnJpZGF0ZSAxLjkuMiAgICAg4pyUIHRpZHlyICAgICAxLjMuMFxu4pyUIHB1cnJyICAgICAxLjAuMSAgICAg4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGRwbHlyOjpmaWx0ZXIoKSBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG7ihLkgVXNlIHRoZSBcdTAwMWJdODs7aHR0cDovL2NvbmZsaWN0ZWQuci1saWIub3JnL1x1MDAwN2NvbmZsaWN0ZWQgcGFja2FnZVx1MDAxYl04OztcdTAwMDcgdG8gZm9yY2UgYWxsIGNvbmZsaWN0cyB0byBiZWNvbWUgZXJyb3JzXG4ifQ== -->
+<pre><code>── Attaching core tidyverse packages ───────────────────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.0     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.1     ✔ tibble    3.1.8
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>This data contains 84 observations (row) and 5 variables
@@ -1777,256 +1788,301 @@ library(tidyverse)</code></pre>
 <h2>2. Contents of CO2 dataset</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaGVscChDTzIpXG5gYGBcbmBgYCJ9 -->
-<pre class="r"><code>```r
-help(CO2)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-The CO2 dataset is from an experiment on the cold tolerance of the grass species _Echinochloa crus-galli_ from Quebec and Mississippi. This data contains 84 observations (row) and 5 variables (column). There are 3 biological replicates for each 4 condition (Quebec-nonchilled, Quebec-chilled, Mississippi-nonchilled, Mississippi-chilled) and 7 different ambient carbon dioxide concentration for each sample (3 x 4 x 7 = 84). 5 variables include the unique identifier for each plant (*Plant*), the origin of the plant (*Type*),  treatment (*Treatment*, which is `nonchilled` or `chilled`), the ambient carbon dioxide concentration (*conc*), the carbon dioxide uptake rates (*uptake*) of the plant.
-
-## 3. Average and median CO2 uptake of the plants from Quebec and Misissippi.
-Functions to compute Average and median in R is as below.
-
-- average : `mean(x)`
-- median : `median(x)`
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBhdmVyYWdlKG1lYW4pIGFuZCBtZWRpYW4gQ08yIHVwdGFrZSBvZiB0aGUgYWxsIHBsYW50c1xuQ08yICU+JVxuICAgIHN1bW1hcml6ZSggIyBzdW1tYXJpemUgcmVzdWx0cyBpbiB0YWJsZSBmb3JtXG4gICAgICBBdmVyYWdlID0gbWVhbih1cHRha2UsIG5hLnJtPVRSVUUpLFxuICAgICAgTWVkaWFuID0gbWVkaWFuKHVwdGFrZSwgbmEucm09VFJVRSlcbiAgICAgIClcbmBgYFxuYGBgclxuTkFcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-# average(mean) and median CO2 uptake of the all plants
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVscChDTzIpXG5gYGAifQ== -->
+<pre class="r"><code>help(CO2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The CO2 dataset is from an experiment on the cold tolerance of the
+grass species <em>Echinochloa crus-galli</em> from Quebec and
+Mississippi. This data contains 84 observations (row) and 5 variables
+(column). There are 3 biological replicates for each 4 condition
+(Quebec-nonchilled, Quebec-chilled, Mississippi-nonchilled,
+Mississippi-chilled) and 7 different ambient carbon dioxide
+concentration for each sample (3 x 4 x 7 = 84). 5 variables include the
+unique identifier for each plant (<em>Plant</em>), the origin of the
+plant (<em>Type</em>), treatment (<em>Treatment</em>, which is
+<code>nonchilled</code> or <code>chilled</code>), the ambient carbon
+dioxide concentration (<em>conc</em>), the carbon dioxide uptake rates
+(<em>uptake</em>) of the plant.</p>
+</div>
+<div id="average-and-median-co2-uptake-of-the-plants-from-quebec-and-misissippi." class="section level2">
+<h2>3. Average and median CO2 uptake of the plants from Quebec and
+Misissippi.</h2>
+<p>Functions to compute Average and median in R is as below.</p>
+<ul>
+<li>average : <code>mean(x)</code></li>
+<li>median : <code>median(x)</code></li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhdmVyYWdlKG1lYW4pIGFuZCBtZWRpYW4gQ08yIHVwdGFrZSBvZiB0aGUgYWxsIHBsYW50c1xuQ08yICU+JVxuICAjIHN1bW1hcml6ZSByZXN1bHRzIGluIHRhYmxlIGZvcm1cbiAgICBzdW1tYXJpemUoIFxuICAgICAgQXZlcmFnZSA9IG1lYW4odXB0YWtlLCBuYS5ybT1UUlVFKSxcbiAgICAgIE1lZGlhbiA9IG1lZGlhbih1cHRha2UsIG5hLnJtPVRSVUUpKVxuYGBgIn0= -->
+<pre class="r"><code># average(mean) and median CO2 uptake of the all plants
 CO2 %&gt;%
-    summarize( # summarize results in table form
+  # summarize results in table form
+    summarize( 
       Average = mean(uptake, na.rm=TRUE),
-      Median = median(uptake, na.rm=TRUE)
-      )</code></pre>
-<pre class="r"><code>NA</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjoiZGF0YS5mcmFtZSIsIm5yb3ciOjEsIm5jb2wiOjIsInN1bW1hcnkiOnsiRGVzY3JpcHRpb24iOiJkZiBbMSDDlyAyXSJ9fSwicmRmIjoiVWtSWU13cFlDZ0FBQUFNQUJBSUNBQU1GQUFBQUFBVlZWRVl0T0FBQUJBSUFBQUFCQUFRQUNRQUFBQUY0QUFBREV3QUFBQUlBQUFBT0FBQUFBVUE3Tm8xbzFvMXBBQUFBRGdBQUFBRkFQRXpNek16TXpRQUFCQUlBQUFBQkFBUUFDUUFBQUFWdVlXMWxjd0FBQUJBQUFBQUNBQVFBQ1FBQUFBZEJkbVZ5WVdkbEFBUUFDUUFBQUFaTlpXUnBZVzRBQUFRQ0FBQUFBUUFFQUFrQUFBQUpjbTkzTG01aGJXVnpBQUFBRFFBQUFBRUFBQUFCQUFBRUFnQUFBQUVBQkFBSkFBQUFCV05zWVhOekFBQUFFQUFBQUFFQUJBQUpBQUFBQ21SaGRHRXVabkpoYldVQUFBRCtBQUFFQWdBQUFBRUFCQUFKQUFBQUIyOXdkR2x2Ym5NQUFBSVRBQUFBQlFBQUFCQUFBQUFCQUFRQUNRQUFBQUZ5QUFBQUVBQUFBQUVBQkFBSkFBQUFEM1Z1Ym1GdFpXUXRZMmgxYm1zdE53QUFBQW9BQUFBQkFBQUFBQUFBQUEwQUFBQUJBQUFBQVFBQUFBMEFBQUFCQUFBQUFnQUFCQUlBQUFML0FBQUFFQUFBQUFVQUJBQUpBQUFBQm1WdVoybHVaUUFFQUFrQUFBQUZiR0ZpWld3QUJBQUpBQUFBRG5KdmQyNWhiV1Z6TG5CeWFXNTBBQVFBQ1FBQUFBcHliM2R6TG5SdmRHRnNBQVFBQ1FBQUFBcGpiMnh6TG5SdmRHRnNBQUFBL2dBQUFQND0ifQ== --&gt;
-
-&lt;div data-pagedtable=&quot;false&quot;&gt;
-  &lt;script data-pagedtable-source type=&quot;application/json&quot;&gt;
-{&quot;columns&quot;:[{&quot;label&quot;:[&quot;Average&quot;],&quot;name&quot;:[1],&quot;type&quot;:[&quot;dbl&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;Median&quot;],&quot;name&quot;:[2],&quot;type&quot;:[&quot;dbl&quot;],&quot;align&quot;:[&quot;right&quot;]}],&quot;data&quot;:[{&quot;1&quot;:&quot;27.2131&quot;,&quot;2&quot;:&quot;28.3&quot;}],&quot;options&quot;:{&quot;columns&quot;:{&quot;min&quot;:{},&quot;max&quot;:[10],&quot;total&quot;:[2]},&quot;rows&quot;:{&quot;min&quot;:[10],&quot;max&quot;:[10],&quot;total&quot;:[1]},&quot;pages&quot;:{}}}
-  &lt;/script&gt;
-&lt;/div&gt;
-
-&lt;!-- rnb-frame-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-Compute average(mean) and median CO2 uptake of the plants from Quebec and Mississippi.
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBhdmVyYWdlKG1lYW4pIGFuZCBtZWRpYW4gQ08yIHVwdGFrZSBvZiB0aGUgcGxhbnRzIGZyb20gUXVlYmVjIGFuZCBNaXNpc3NpcHBpXG5DTzIgJT4lXG4gICAgZ3JvdXBfYnkoVHlwZSkgJT4lICMgZ3JvdXBpbmcgZGF0YXMgb2Ygc2FtZSBvcmlnaW5cbiAgICBzdW1tYXJpemUoICMgc3VtbWFyaXplIHJlc3VsdHMgaW4gdGFibGUgZm9ybVxuICAgICAgQXZlcmFnZSA9IG1lYW4odXB0YWtlLCBuYS5ybT1UUlVFKSxcbiAgICAgIE1lZGlhbiA9IG1lZGlhbih1cHRha2UsIG5hLnJtPVRSVUUpXG4gICAgICApXG5gYGBcbmBgYHJcbk5BXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-# average(mean) and median CO2 uptake of the plants from Quebec and Misissippi
+      Median = median(uptake, na.rm=TRUE))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MSwibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbMSDDlyAyXSJdfX0sInJkZiI6IlVrUllNd3BZQ2dBQUFBTUFCQUlDQUFNRkFBQUFBQVZWVkVZdE9BQUFCQUlBQUFBQkFBUUFDUUFBQUFGNEFBQURFd0FBQUFJQUFBQU9BQUFBQVVBN05vMW8xbzFwQUFBQURnQUFBQUZBUEV6TXpNek16UUFBQkFJQUFBQUJBQVFBQ1FBQUFBVnVZVzFsY3dBQUFCQUFBQUFDQUFRQUNRQUFBQWRCZG1WeVlXZGxBQVFBQ1FBQUFBWk5aV1JwWVc0QUFBUUNBQUFBQVFBRUFBa0FBQUFKY205M0xtNWhiV1Z6QUFBQURRQUFBQUVBQUFBQkFBQUVBZ0FBQUFFQUJBQUpBQUFBQldOc1lYTnpBQUFBRUFBQUFBRUFCQUFKQUFBQUNtUmhkR0V1Wm5KaGJXVUFBQUQrQUFBRUFnQUFBQUVBQkFBSkFBQUFCMjl3ZEdsdmJuTUFBQUlUQUFBQUJRQUFBQkFBQUFBQkFBUUFDUUFBQUFGeUFBQUFFQUFBQUFFQUJBQUpBQUFBRDNWdWJtRnRaV1F0WTJoMWJtc3RNZ0FBQUFvQUFBQUJBQUFBQUFBQUFBMEFBQUFCQUFBQUFRQUFBQTBBQUFBQkFBQUFBZ0FBQkFJQUFBTC9BQUFBRUFBQUFBVUFCQUFKQUFBQUJtVnVaMmx1WlFBRUFBa0FBQUFGYkdGaVpXd0FCQUFKQUFBQURuSnZkMjVoYldWekxuQnlhVzUwQUFRQUNRQUFBQXB5YjNkekxuUnZkR0ZzQUFRQUNRQUFBQXBqYjJ4ekxuUnZkR0ZzQUFBQS9nQUFBUDQ9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Average"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Median"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"27.2131","2":"28.3"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Compute average(mean) and median CO2 uptake of the plants from Quebec
+and Mississippi.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhdmVyYWdlKG1lYW4pIGFuZCBtZWRpYW4gQ08yIHVwdGFrZSBvZiB0aGUgcGxhbnRzIGZyb20gUXVlYmVjIGFuZCBNaXNzaXNzaXBwaS5cbkNPMiAlPiVcbiAgICBncm91cF9ieShUeXBlKSAlPiUgIyBncm91cGluZyBkYXRhIG9mIHNhbWUgb3JpZ2luXG4gICAgIyBzdW1tYXJpemUgcmVzdWx0cyBpbiB0YWJsZSBmb3JtXG4gICAgc3VtbWFyaXplKFxuICAgICAgQXZlcmFnZSA9IG1lYW4odXB0YWtlLCBuYS5ybT1UUlVFKSxcbiAgICAgIE1lZGlhbiA9IG1lZGlhbih1cHRha2UsIG5hLnJtPVRSVUUpKVxuYGBgIn0= -->
+<pre class="r"><code># average(mean) and median CO2 uptake of the plants from Quebec and Mississippi.
 CO2 %&gt;%
-    group_by(Type) %&gt;% # grouping datas of same origin
-    summarize( # summarize results in table form
+    group_by(Type) %&gt;% # grouping data of same origin
+    # summarize results in table form
+    summarize(
       Average = mean(uptake, na.rm=TRUE),
-      Median = median(uptake, na.rm=TRUE)
-      )</code></pre>
-<pre class="r"><code>NA</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
+      Median = median(uptake, na.rm=TRUE))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6Mywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIyIMOXIDMiXX19LCJyZGYiOiJVa1JZTXdwWUNnQUFBQU1BQkFJQ0FBTUZBQUFBQUFWVlZFWXRPQUFBQkFJQUFBQUJBQVFBQ1FBQUFBRjRBQUFERXdBQUFBTUFBQU1OQUFBQUFnQUFBQUVBQUFBQ0FBQUVBZ0FBQUFFQUJBQUpBQUFBQm14bGRtVnNjd0FBQUJBQUFBQUNBQVFBQ1FBQUFBWlJkV1ZpWldNQUJBQUpBQUFBQzAxcGMzTnBjM05wY0hCcEFBQUVBZ0FBQUFFQUJBQUpBQUFBQldOc1lYTnpBQUFBRUFBQUFBRUFCQUFKQUFBQUJtWmhZM1J2Y2dBQUFQNEFBQUFPQUFBQUFrQkF4WHhYeFh4WVFEVGlJaUlpSWlJQUFBQU9BQUFBQWtCQ2t6TXpNek0wUUROTXpNek16TXdBQUFRQ0FBQUFBUUFFQUFrQUFBQUZibUZ0WlhNQUFBQVFBQUFBQXdBRUFBa0FBQUFFVkhsd1pRQUVBQWtBQUFBSFFYWmxjbUZuWlFBRUFBa0FBQUFHVFdWa2FXRnVBQUFFQWdBQUFBRUFCQUFKQUFBQUNYSnZkeTV1WVcxbGN3QUFBQTBBQUFBQ2dBQUFBUC8vLy80QUFBUUNBQUFEL3dBQUFCQUFBQUFCQUFRQUNRQUFBQXBrWVhSaExtWnlZVzFsQUFBQS9nQUFCQUlBQUFBQkFBUUFDUUFBQUFkdmNIUnBiMjV6QUFBQ0V3QUFBQVVBQUFBUUFBQUFBUUFFQUFrQUFBQUJjZ0FBQUJBQUFBQUJBQVFBQ1FBQUFBOTFibTVoYldWa0xXTm9kVzVyTFRNQUFBQUtBQUFBQVFBQUFBQUFBQUFOQUFBQUFRQUFBQUlBQUFBTkFBQUFBUUFBQUFNQUFBUUNBQUFFL3dBQUFCQUFBQUFGQUFRQUNRQUFBQVpsYm1kcGJtVUFCQUFKQUFBQUJXeGhZbVZzQUFRQUNRQUFBQTV5YjNkdVlXMWxjeTV3Y21sdWRBQUVBQWtBQUFBS2NtOTNjeTUwYjNSaGJBQUVBQWtBQUFBS1kyOXNjeTUwYjNSaGJBQUFBUDRBQUFEKyJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Type"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Average"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Median"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Quebec","2":"33.54286","3":"37.15"},{"1":"Mississippi","2":"20.88333","3":"19.30"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>From the data, we can speculate that the plant from Quebec will have
+more CO2 uptake than the plant from Mississippi.</p>
+</div>
+<div id="optional-how-many-genes-are-expressed-in-each-sample-in-airway-dataset-how-many-genes-are-not-expressed-in-any-sample" class="section level2">
+<h2>4. [Optional] How many genes are expressed in each sample in
+“airway” dataset? How many genes are not expressed in any sample?</h2>
+<p>To load airway dataset from Bioconductor, command is as below.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWYgKCFyZXF1aXJlKFwiQmlvY01hbmFnZXJcIiwgcXVpZXRseSA9IFRSVUUpKVxuICAgIGluc3RhbGwucGFja2FnZXMoXCJCaW9jTWFuYWdlclwiKVxuYGBgIn0= -->
+<pre class="r"><code>if (!require(&quot;BiocManager&quot;, quietly = TRUE))
+    install.packages(&quot;BiocManager&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQmlvY29uZHVjdG9yIHZlcnNpb24gMy4xNiAoQmlvY01hbmFnZXIgMS4zMC4xOSksIFIgNC4yLjIgKDIwMjItMTAtMzEpXG4ifQ== -->
+<pre><code>Bioconductor version 3.16 (BiocManager 1.30.19), R 4.2.2 (2022-10-31)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQmlvY01hbmFnZXI6Omluc3RhbGwoXCJhaXJ3YXlcIilcbmBgYCJ9 -->
+<pre class="r"><code>BiocManager::install(&quot;airway&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiJ2dldE9wdGlvbihcInJlcG9zXCIpJyByZXBsYWNlcyBCaW9jb25kdWN0b3Igc3RhbmRhcmQgcmVwb3NpdG9yaWVzLCBzZWUgJz9yZXBvc2l0b3JpZXMnIGZvciBkZXRhaWxzXG5cbnJlcGxhY2VtZW50IHJlcG9zaXRvcmllczpcbiAgICBDUkFOOiBodHRwczovL3BhY2thZ2VtYW5hZ2VyLnBvc2l0LmNvL2NyYW4vX19saW51eF9fL2phbW15L2xhdGVzdFxuXG5CaW9jb25kdWN0b3IgdmVyc2lvbiAzLjE2IChCaW9jTWFuYWdlciAxLjMwLjE5KSwgUiA0LjIuMiAoMjAyMi0xMC0zMSlcbldhcm5pbmc6IHBhY2thZ2Uocykgbm90IGluc3RhbGxlZCB3aGVuIHZlcnNpb24ocykgc2FtZSBhcyBvciBncmVhdGVyIHRoYW4gY3VycmVudDsgdXNlIGBmb3JjZSA9IFRSVUVgIHRvXG4gIHJlLWluc3RhbGw6ICdhaXJ3YXknSW5zdGFsbGF0aW9uIHBhdGhzIG5vdCB3cml0ZWFibGUsIHVuYWJsZSB0byB1cGRhdGUgcGFja2FnZXNcbiAgcGF0aDogL3Vzci9sb2NhbC9saWIvUi9saWJyYXJ5XG4gIHBhY2thZ2VzOlxuICAgIGNsYXNzLCBjb2RldG9vbHMsIE1BU1MsIG1nY3YsIG5sbWUsIHNwYXRpYWwsIHN1cnZpdmFsXG5PbGQgcGFja2FnZXM6ICdCaW9jTWFuYWdlcicsICdjYWNoZW0nLCAnZmFuc2knLCAnZmFzdG1hcCcsICdmb250YXdlc29tZScsICdmcycsICdnaCcsICdoYXZlbicsXG4gICdodHRwdXYnLCAnaHR0cicsICdrbml0cicsICdSY3BwJywgJ3Nhc3MnLCAnc291cmNldG9vbHMnLCAnc3R5bGVyJywgJ3Rpbnl0ZXgnLCAndXRmOCcsICd4ZnVuJyxcbiAgJ3lhbWwnXG4ifQ== -->
+<pre><code>&#39;getOption(&quot;repos&quot;)&#39; replaces Bioconductor standard repositories, see &#39;?repositories&#39; for details
 
-&lt;!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6Mywic3VtbWFyeSI6eyJBIHRpYmJsZSI6IjIgw5cgMyJ9fSwicmRmIjoiVWtSWU13cFlDZ0FBQUFNQUJBSUNBQU1GQUFBQUFBVlZWRVl0T0FBQUJBSUFBQUFCQUFRQUNRQUFBQUY0QUFBREV3QUFBQU1BQUFNTkFBQUFBZ0FBQUFFQUFBQUNBQUFFQWdBQUFBRUFCQUFKQUFBQUJteGxkbVZzY3dBQUFCQUFBQUFDQUFRQUNRQUFBQVpSZFdWaVpXTUFCQUFKQUFBQUMwMXBjM05wYzNOcGNIQnBBQUFFQWdBQUFBRUFCQUFKQUFBQUJXTnNZWE56QUFBQUVBQUFBQUVBQkFBSkFBQUFCbVpoWTNSdmNnQUFBUDRBQUFBT0FBQUFBa0JBeFh4WHhYeFlRRFRpSWlJaUlpSUFBQUFPQUFBQUFrQkNrek16TXpNMFFETk16TXpNek13QUFBUUNBQUFBQVFBRUFBa0FBQUFGYm1GdFpYTUFBQUFRQUFBQUF3QUVBQWtBQUFBRVZIbHdaUUFFQUFrQUFBQUhRWFpsY21GblpRQUVBQWtBQUFBR1RXVmthV0Z1QUFBRUFnQUFBQUVBQkFBSkFBQUFDWEp2ZHk1dVlXMWxjd0FBQUEwQUFBQUNnQUFBQVAvLy8vNEFBQVFDQUFBRC93QUFBQkFBQUFBQkFBUUFDUUFBQUFwa1lYUmhMbVp5WVcxbEFBQUEvZ0FBQkFJQUFBQUJBQVFBQ1FBQUFBZHZjSFJwYjI1ekFBQUNFd0FBQUFVQUFBQVFBQUFBQVFBRUFBa0FBQUFCY2dBQUFCQUFBQUFCQUFRQUNRQUFBQTkxYm01aGJXVmtMV05vZFc1ckxUZ0FBQUFLQUFBQUFRQUFBQUFBQUFBTkFBQUFBUUFBQUFJQUFBQU5BQUFBQVFBQUFBTUFBQVFDQUFBRS93QUFBQkFBQUFBRkFBUUFDUUFBQUFabGJtZHBibVVBQkFBSkFBQUFCV3hoWW1Wc0FBUUFDUUFBQUE1eWIzZHVZVzFsY3k1d2NtbHVkQUFFQUFrQUFBQUtjbTkzY3k1MGIzUmhiQUFFQUFrQUFBQUtZMjlzY3k1MGIzUmhiQUFBQVA0QUFBRCsifQ== --&gt;
+replacement repositories:
+    CRAN: https://packagemanager.posit.co/cran/__linux__/jammy/latest
 
-&lt;div data-pagedtable=&quot;false&quot;&gt;
-  &lt;script data-pagedtable-source type=&quot;application/json&quot;&gt;
-{&quot;columns&quot;:[{&quot;label&quot;:[&quot;Type&quot;],&quot;name&quot;:[1],&quot;type&quot;:[&quot;fctr&quot;],&quot;align&quot;:[&quot;left&quot;]},{&quot;label&quot;:[&quot;Average&quot;],&quot;name&quot;:[2],&quot;type&quot;:[&quot;dbl&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;Median&quot;],&quot;name&quot;:[3],&quot;type&quot;:[&quot;dbl&quot;],&quot;align&quot;:[&quot;right&quot;]}],&quot;data&quot;:[{&quot;1&quot;:&quot;Quebec&quot;,&quot;2&quot;:&quot;33.54286&quot;,&quot;3&quot;:&quot;37.15&quot;},{&quot;1&quot;:&quot;Mississippi&quot;,&quot;2&quot;:&quot;20.88333&quot;,&quot;3&quot;:&quot;19.30&quot;}],&quot;options&quot;:{&quot;columns&quot;:{&quot;min&quot;:{},&quot;max&quot;:[10],&quot;total&quot;:[3]},&quot;rows&quot;:{&quot;min&quot;:[10],&quot;max&quot;:[10],&quot;total&quot;:[2]},&quot;pages&quot;:{}}}
-  &lt;/script&gt;
-&lt;/div&gt;
+Bioconductor version 3.16 (BiocManager 1.30.19), R 4.2.2 (2022-10-31)
+Warning: package(s) not installed when version(s) same as or greater than current; use `force = TRUE` to
+  re-install: &#39;airway&#39;Installation paths not writeable, unable to update packages
+  path: /usr/local/lib/R/library
+  packages:
+    class, codetools, MASS, mgcv, nlme, spatial, survival
+Old packages: &#39;BiocManager&#39;, &#39;cachem&#39;, &#39;fansi&#39;, &#39;fastmap&#39;, &#39;fontawesome&#39;, &#39;fs&#39;, &#39;gh&#39;, &#39;haven&#39;,
+  &#39;httpuv&#39;, &#39;httr&#39;, &#39;knitr&#39;, &#39;Rcpp&#39;, &#39;sass&#39;, &#39;sourcetools&#39;, &#39;styler&#39;, &#39;tinytex&#39;, &#39;utf8&#39;, &#39;xfun&#39;,
+  &#39;yaml&#39;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVXBkYXRlIGFsbC9zb21lL25vbmU/IFthL3Mvbl06IFxuIn0= -->
+<pre><code>Update all/some/none? [a/s/n]: </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxublxuXG5saWJyYXJ5KCBcImFpcndheVwiIClcbmBgYCJ9 -->
+<pre class="r"><code>n
 
-&lt;!-- rnb-frame-end --&gt;
+library( &quot;airway&quot; )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBTdW1tYXJpemVkRXhwZXJpbWVudFxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBNYXRyaXhHZW5lcmljc1xuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBtYXRyaXhTdGF0c1xuXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYbWF0cml4U3RhdHPigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpkcGx5cuKAmTpcblxuICAgIGNvdW50XG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmE1hdHJpeEdlbmVyaWNz4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTptYXRyaXhTdGF0c+KAmTpcblxuICAgIGNvbEFsbHMsIGNvbEFueU5BcywgY29sQW55cywgY29sQXZnc1BlclJvd1NldCwgY29sQ29sbGFwc2UsIGNvbENvdW50cywgY29sQ3VtbWF4cyxcbiAgICBjb2xDdW1taW5zLCBjb2xDdW1wcm9kcywgY29sQ3Vtc3VtcywgY29sRGlmZnMsIGNvbElRUkRpZmZzLCBjb2xJUVJzLCBjb2xMb2dTdW1FeHBzLFxuICAgIGNvbE1hZERpZmZzLCBjb2xNYWRzLCBjb2xNYXhzLCBjb2xNZWFuczIsIGNvbE1lZGlhbnMsIGNvbE1pbnMsIGNvbE9yZGVyU3RhdHMsXG4gICAgY29sUHJvZHMsIGNvbFF1YW50aWxlcywgY29sUmFuZ2VzLCBjb2xSYW5rcywgY29sU2REaWZmcywgY29sU2RzLCBjb2xTdW1zMixcbiAgICBjb2xUYWJ1bGF0ZXMsIGNvbFZhckRpZmZzLCBjb2xWYXJzLCBjb2xXZWlnaHRlZE1hZHMsIGNvbFdlaWdodGVkTWVhbnMsXG4gICAgY29sV2VpZ2h0ZWRNZWRpYW5zLCBjb2xXZWlnaHRlZFNkcywgY29sV2VpZ2h0ZWRWYXJzLCByb3dBbGxzLCByb3dBbnlOQXMsIHJvd0FueXMsXG4gICAgcm93QXZnc1BlckNvbFNldCwgcm93Q29sbGFwc2UsIHJvd0NvdW50cywgcm93Q3VtbWF4cywgcm93Q3VtbWlucywgcm93Q3VtcHJvZHMsXG4gICAgcm93Q3Vtc3Vtcywgcm93RGlmZnMsIHJvd0lRUkRpZmZzLCByb3dJUVJzLCByb3dMb2dTdW1FeHBzLCByb3dNYWREaWZmcywgcm93TWFkcyxcbiAgICByb3dNYXhzLCByb3dNZWFuczIsIHJvd01lZGlhbnMsIHJvd01pbnMsIHJvd09yZGVyU3RhdHMsIHJvd1Byb2RzLCByb3dRdWFudGlsZXMsXG4gICAgcm93UmFuZ2VzLCByb3dSYW5rcywgcm93U2REaWZmcywgcm93U2RzLCByb3dTdW1zMiwgcm93VGFidWxhdGVzLCByb3dWYXJEaWZmcyxcbiAgICByb3dWYXJzLCByb3dXZWlnaHRlZE1hZHMsIHJvd1dlaWdodGVkTWVhbnMsIHJvd1dlaWdodGVkTWVkaWFucywgcm93V2VpZ2h0ZWRTZHMsXG4gICAgcm93V2VpZ2h0ZWRWYXJzXG5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogR2Vub21pY1Jhbmdlc1xuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBzdGF0czRcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogQmlvY0dlbmVyaWNzXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhCaW9jR2VuZXJpY3PigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmx1YnJpZGF0ZeKAmTpcblxuICAgIGludGVyc2VjdCwgc2V0ZGlmZiwgdW5pb25cblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmRwbHly4oCZOlxuXG4gICAgY29tYmluZSwgaW50ZXJzZWN0LCBzZXRkaWZmLCB1bmlvblxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6c3RhdHPigJk6XG5cbiAgICBJUVIsIG1hZCwgc2QsIHZhciwgeHRhYnNcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmJhc2XigJk6XG5cbiAgICBhbnlEdXBsaWNhdGVkLCBhcGVybSwgYXBwZW5kLCBhcy5kYXRhLmZyYW1lLCBiYXNlbmFtZSwgY2JpbmQsIGNvbG5hbWVzLCBkaXJuYW1lLFxuICAgIGRvLmNhbGwsIGR1cGxpY2F0ZWQsIGV2YWwsIGV2YWxxLCBGaWx0ZXIsIEZpbmQsIGdldCwgZ3JlcCwgZ3JlcGwsIGludGVyc2VjdCxcbiAgICBpcy51bnNvcnRlZCwgbGFwcGx5LCBNYXAsIG1hcHBseSwgbWF0Y2gsIG1nZXQsIG9yZGVyLCBwYXN0ZSwgcG1heCwgcG1heC5pbnQsIHBtaW4sXG4gICAgcG1pbi5pbnQsIFBvc2l0aW9uLCByYW5rLCByYmluZCwgUmVkdWNlLCByb3duYW1lcywgc2FwcGx5LCBzZXRkaWZmLCBzb3J0LCB0YWJsZSxcbiAgICB0YXBwbHksIHVuaW9uLCB1bmlxdWUsIHVuc3BsaXQsIHdoaWNoLm1heCwgd2hpY2gubWluXG5cbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogUzRWZWN0b3JzXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhTNFZlY3RvcnPigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmx1YnJpZGF0ZeKAmTpcblxuICAgIHNlY29uZCwgc2Vjb25kPC1cblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmRwbHly4oCZOlxuXG4gICAgZmlyc3QsIHJlbmFtZVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnRpZHly4oCZOlxuXG4gICAgZXhwYW5kXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpiYXNl4oCZOlxuXG4gICAgZXhwYW5kLmdyaWQsIEksIHVubmFtZVxuXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IElSYW5nZXNcblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmElSYW5nZXPigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpsdWJyaWRhdGXigJk6XG5cbiAgICAld2l0aGluJVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6ZHBseXLigJk6XG5cbiAgICBjb2xsYXBzZSwgZGVzYywgc2xpY2VcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpwdXJycuKAmTpcblxuICAgIHJlZHVjZVxuXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IEdlbm9tZUluZm9EYlxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBCaW9iYXNlXG5XZWxjb21lIHRvIEJpb2NvbmR1Y3RvclxuXG4gICAgVmlnbmV0dGVzIGNvbnRhaW4gaW50cm9kdWN0b3J5IG1hdGVyaWFsOyB2aWV3IHdpdGggJ2Jyb3dzZVZpZ25ldHRlcygpJy4gVG8gY2l0ZVxuICAgIEJpb2NvbmR1Y3Rvciwgc2VlICdjaXRhdGlvbihcIkJpb2Jhc2VcIiknLCBhbmQgZm9yIHBhY2thZ2VzICdjaXRhdGlvbihcInBrZ25hbWVcIiknLlxuXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhCaW9iYXNl4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6TWF0cml4R2VuZXJpY3PigJk6XG5cbiAgICByb3dNZWRpYW5zXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTptYXRyaXhTdGF0c+KAmTpcblxuICAgIGFueU1pc3NpbmcsIHJvd01lZGlhbnNcbiJ9 -->
+<pre><code>Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
 
-&lt;!-- rnb-chunk-end --&gt;
+Attaching package: ‘matrixStats’
 
+The following object is masked from ‘package:dplyr’:
 
-&lt;!-- rnb-text-begin --&gt;
-
-From the data, we can speculate that the plant from Quebec will have more CO2 uptake than the plant from Mississippi.
-
-## 4. [Optional] How many genes are expressed in each sample in &quot;airway&quot; dataset? How many genes are not expressed in any sample?
-
-To load airway dataset from Bioconductor, command is as below.
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSggXFxhaXJ3YXlcXCApXG5kYXRhKFxcYWlyd2F5XFwpXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-library( \airway\ )
-data(\airway\)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
+    count
 
 
-&lt;!-- rnb-text-begin --&gt;
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse, colCounts, colCummaxs,
+    colCummins, colCumprods, colCumsums, colDiffs, colIQRDiffs, colIQRs, colLogSumExps,
+    colMadDiffs, colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds, colSums2,
+    colTabulates, colVarDiffs, colVars, colWeightedMads, colWeightedMeans,
+    colWeightedMedians, colWeightedSds, colWeightedVars, rowAlls, rowAnyNAs, rowAnys,
+    rowAvgsPerColSet, rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps, rowMadDiffs, rowMads,
+    rowMaxs, rowMeans2, rowMedians, rowMins, rowOrderStats, rowProds, rowQuantiles,
+    rowRanges, rowRanks, rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs,
+    rowVars, rowWeightedMads, rowWeightedMeans, rowWeightedMedians, rowWeightedSds,
+    rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:lubridate’:
+
+    intersect, setdiff, union
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind, colnames, dirname,
+    do.call, duplicated, eval, evalq, Filter, Find, get, grep, grepl, intersect,
+    is.unsorted, lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort, table,
+    tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:lubridate’:
+
+    second, second&lt;-
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following object is masked from ‘package:tidyr’:
+
+    expand
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following object is masked from ‘package:lubridate’:
+
+    %within%
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+The following object is masked from ‘package:purrr’:
+
+    reduce
+
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with &#39;browseVignettes()&#39;. To cite
+    Bioconductor, see &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.
 
 
+Attaching package: ‘Biobase’
 
-&lt;!-- rnb-text-end --&gt;
+The following object is masked from ‘package:MatrixGenerics’:
 
+    rowMedians
 
-&lt;!-- rnb-chunk-begin --&gt;
+The following objects are masked from ‘package:matrixStats’:
 
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaGVscChhaXJ3YXkpXG5haXJ3YXlcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-help(airway)
+    anyMissing, rowMedians</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShcImFpcndheVwiKVxuYGBgIn0= -->
+<pre class="r"><code>data(&quot;airway&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVscChhaXJ3YXkpXG5haXJ3YXlcbmBgYCJ9 -->
+<pre class="r"><code>help(airway)
 airway</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiY2xhc3M6IFJhbmdlZFN1bW1hcml6ZWRFeHBlcmltZW50IFxuZGltOiA2NDEwMiA4IFxubWV0YWRhdGEoMSk6ICcnXG5hc3NheXMoMSk6IGNvdW50c1xucm93bmFtZXMoNjQxMDIpOiBFTlNHMDAwMDAwMDAwMDMgRU5TRzAwMDAwMDAwMDA1IC4uLiBMUkdfOTggTFJHXzk5XG5yb3dEYXRhIG5hbWVzKDApOlxuY29sbmFtZXMoOCk6IFNSUjEwMzk1MDggU1JSMTAzOTUwOSAuLi4gU1JSMTAzOTUyMCBTUlIxMDM5NTIxXG5jb2xEYXRhIG5hbWVzKDkpOiBTYW1wbGVOYW1lIGNlbGwgLi4uIFNhbXBsZSBCaW9TYW1wbGVcbiJ9 --&gt;
-</code></pre>
-<p>class: RangedSummarizedExperiment dim: 64102 8 metadata(1): ’’
-assays(1): counts rownames(64102): ENSG00000000003 ENSG00000000005 …
-LRG_98 LRG_99 rowData names(0): colnames(8): SRR1039508 SRR1039509 …
-SRR1039520 SRR1039521 colData names(9): SampleName cell … Sample
-BioSample</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-`airway` data is the RNA-seq read count data of airway smooth muscle cell lines, contains 64102 features of 8 samples. Matrix of read count (which row is gene, and column is sample) is able to extruct by `assay(airway)`.
-
-If read count is over 1 that gene is considered as expressed gene.
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBjb3VudCBleHByZXNzZWQgZ2VuZSAocmVhZCBjb3VudCA+PTEpIGZvciBlYWNoIHNhbXBsZVxuYXMuZGF0YS5mcmFtZShhc3NheShhaXJ3YXkpKSAlPiUgIyBjaGFuZ2UgZGF0YSBmb3JtYXQuIE90aGVyd2lzZSwgaXQgd2lsbCBiZSBgRXJyb3IgaW4gVXNlTWV0aG9kKFxcdGJsX3ZhcnNcXClgXG4gIHN1bW1hcmlzZV9hbGwofnN1bSguID49IDEsIG5hLnJtID0gVFJVRSkpICMgY291bnQgaWYgdmFsdWUgaXMgPj0xLlxuYGBgXG5gYGByXG5OQVxuYGBgXG5gYGAifQ== --&gt;
-
-```r
-```r
-# count expressed gene (read count &gt;=1) for each sample
-as.data.frame(assay(airway)) %&gt;% # change data format. Otherwise, it will be `Error in UseMethod(\tbl_vars\)`
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiY2xhc3M6IFJhbmdlZFN1bW1hcml6ZWRFeHBlcmltZW50IFxuZGltOiA2NDEwMiA4IFxubWV0YWRhdGEoMSk6ICcnXG5hc3NheXMoMSk6IGNvdW50c1xucm93bmFtZXMoNjQxMDIpOiBFTlNHMDAwMDAwMDAwMDMgRU5TRzAwMDAwMDAwMDA1IC4uLiBMUkdfOTggTFJHXzk5XG5yb3dEYXRhIG5hbWVzKDApOlxuY29sbmFtZXMoOCk6IFNSUjEwMzk1MDggU1JSMTAzOTUwOSAuLi4gU1JSMTAzOTUyMCBTUlIxMDM5NTIxXG5jb2xEYXRhIG5hbWVzKDkpOiBTYW1wbGVOYW1lIGNlbGwgLi4uIFNhbXBsZSBCaW9TYW1wbGVcbiJ9 -->
+<pre><code>class: RangedSummarizedExperiment 
+dim: 64102 8 
+metadata(1): &#39;&#39;
+assays(1): counts
+rownames(64102): ENSG00000000003 ENSG00000000005 ... LRG_98 LRG_99
+rowData names(0):
+colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521
+colData names(9): SampleName cell ... Sample BioSample</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><code>airway</code> data is the RNA-seq read count data of airway
+smooth muscle cell lines, contains 64102 features of 8 samples. Matrix
+of read count (which row is gene, and column is sample) is able to
+extruct by <code>assay(airway)</code>.</p>
+<p>If read count is over 1 that gene is considered as expressed
+gene.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb3VudCBleHByZXNzZWQgZ2VuZSAocmVhZCBjb3VudCA+PTEpIGZvciBlYWNoIHNhbXBsZVxuYXMuZGF0YS5mcmFtZShhc3NheShhaXJ3YXkpKSAlPiUgIyBjaGFuZ2UgZGF0YSBmb3JtYXQuIE90aGVyd2lzZSwgaXQgd2lsbCBiZSBgRXJyb3IgaW4gVXNlTWV0aG9kKFwidGJsX3ZhcnNcIilgXG4gIHN1bW1hcmlzZV9hbGwofnN1bSguID49IDEsIG5hLnJtID0gVFJVRSkpICMgY291bnQgaWYgdmFsdWUgaXMgPj0xLlxuYGBgIn0= -->
+<pre class="r"><code># count expressed gene (read count &gt;=1) for each sample
+as.data.frame(assay(airway)) %&gt;% # change data format. Otherwise, it will be `Error in UseMethod(&quot;tbl_vars&quot;)`
   summarise_all(~sum(. &gt;= 1, na.rm = TRUE)) # count if value is &gt;=1.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MSwibmNvbCI6OCwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbMSDDlyA4XSJdfX0sInJkZiI6IlVrUllNd3BZQ2dBQUFBTUFCQUlDQUFNRkFBQUFBQVZWVkVZdE9BQUFCQUlBQUFBQkFBUUFDUUFBQUFGNEFBQURFd0FBQUFnQUFBQU5BQUFBQVFBQVlEa0FBQUFOQUFBQUFRQUFYODhBQUFBTkFBQUFBUUFBWkdNQUFBQU5BQUFBQVFBQVdsUUFBQUFOQUFBQUFRQUFZNlFBQUFBTkFBQUFBUUFBWlk0QUFBQU5BQUFBQVFBQVlGWUFBQUFOQUFBQUFRQUFYYmNBQUFRQ0FBQUFBUUFFQUFrQUFBQUZibUZ0WlhNQUFBQVFBQUFBQ0FBRUFBa0FBQUFLVTFKU01UQXpPVFV3T0FBRUFBa0FBQUFLVTFKU01UQXpPVFV3T1FBRUFBa0FBQUFLVTFKU01UQXpPVFV4TWdBRUFBa0FBQUFLVTFKU01UQXpPVFV4TXdBRUFBa0FBQUFLVTFKU01UQXpPVFV4TmdBRUFBa0FBQUFLVTFKU01UQXpPVFV4TndBRUFBa0FBQUFLVTFKU01UQXpPVFV5TUFBRUFBa0FBQUFLVTFKU01UQXpPVFV5TVFBQUJBSUFBQUFCQUFRQUNRQUFBQWx5YjNjdWJtRnRaWE1BQUFBTkFBQUFBUUFBQUFFQUFBUUNBQUFBQVFBRUFBa0FBQUFGWTJ4aGMzTUFBQUFRQUFBQUFRQUVBQWtBQUFBS1pHRjBZUzVtY21GdFpRQUFBUDRBQUFRQ0FBQUFBUUFFQUFrQUFBQUhiM0IwYVc5dWN3QUFBaE1BQUFBRkFBQUFFQUFBQUFFQUJBQUpBQUFBQVhJQUFBQVFBQUFBQVFBRUFBa0FBQUFQZFc1dVlXMWxaQzFqYUhWdWF5MDJBQUFBQ2dBQUFBRUFBQUFBQUFBQURRQUFBQUVBQUFBQkFBQUFEUUFBQUFFQUFBQUlBQUFFQWdBQUF2OEFBQUFRQUFBQUJRQUVBQWtBQUFBR1pXNW5hVzVsQUFRQUNRQUFBQVZzWVdKbGJBQUVBQWtBQUFBT2NtOTNibUZ0WlhNdWNISnBiblFBQkFBSkFBQUFDbkp2ZDNNdWRHOTBZV3dBQkFBSkFBQUFDbU52YkhNdWRHOTBZV3dBQUFEK0FBQUEvZz09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SRR1039508"],"name":[1],"type":["int"],"align":["right"]},{"label":["SRR1039509"],"name":[2],"type":["int"],"align":["right"]},{"label":["SRR1039512"],"name":[3],"type":["int"],"align":["right"]},{"label":["SRR1039513"],"name":[4],"type":["int"],"align":["right"]},{"label":["SRR1039516"],"name":[5],"type":["int"],"align":["right"]},{"label":["SRR1039517"],"name":[6],"type":["int"],"align":["right"]},{"label":["SRR1039520"],"name":[7],"type":["int"],"align":["right"]},{"label":["SRR1039521"],"name":[8],"type":["int"],"align":["right"]}],"data":[{"1":"24633","2":"24527","3":"25699","4":"23124","5":"25508","6":"25998","7":"24662","8":"23991"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTkFcbmBgYCJ9 -->
 <pre class="r"><code>NA</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjoiZGF0YS5mcmFtZSIsIm5yb3ciOjEsIm5jb2wiOjgsInN1bW1hcnkiOnsiRGVzY3JpcHRpb24iOiJkZiBbMSDDlyA4XSJ9fSwicmRmIjoiVWtSWU13cFlDZ0FBQUFNQUJBSUNBQU1GQUFBQUFBVlZWRVl0T0FBQUJBSUFBQUFCQUFRQUNRQUFBQUY0QUFBREV3QUFBQWdBQUFBTkFBQUFBUUFBWURrQUFBQU5BQUFBQVFBQVg4OEFBQUFOQUFBQUFRQUFaR01BQUFBTkFBQUFBUUFBV2xRQUFBQU5BQUFBQVFBQVk2UUFBQUFOQUFBQUFRQUFaWTRBQUFBTkFBQUFBUUFBWUZZQUFBQU5BQUFBQVFBQVhiY0FBQVFDQUFBQUFRQUVBQWtBQUFBRmJtRnRaWE1BQUFBUUFBQUFDQUFFQUFrQUFBQUtVMUpTTVRBek9UVXdPQUFFQUFrQUFBQUtVMUpTTVRBek9UVXdPUUFFQUFrQUFBQUtVMUpTTVRBek9UVXhNZ0FFQUFrQUFBQUtVMUpTTVRBek9UVXhNd0FFQUFrQUFBQUtVMUpTTVRBek9UVXhOZ0FFQUFrQUFBQUtVMUpTTVRBek9UVXhOd0FFQUFrQUFBQUtVMUpTTVRBek9UVXlNQUFFQUFrQUFBQUtVMUpTTVRBek9UVXlNUUFBQkFJQUFBQUJBQVFBQ1FBQUFBbHliM2N1Ym1GdFpYTUFBQUFOQUFBQUFRQUFBQUVBQUFRQ0FBQUFBUUFFQUFrQUFBQUZZMnhoYzNNQUFBQVFBQUFBQVFBRUFBa0FBQUFLWkdGMFlTNW1jbUZ0WlFBQUFQNEFBQVFDQUFBQUFRQUVBQWtBQUFBSGIzQjBhVzl1Y3dBQUFoTUFBQUFGQUFBQUVBQUFBQUVBQkFBSkFBQUFBWElBQUFBUUFBQUFBUUFFQUFrQUFBQVFkVzV1WVcxbFpDMWphSFZ1YXkwek1BQUFBQW9BQUFBQkFBQUFBQUFBQUEwQUFBQUJBQUFBQVFBQUFBMEFBQUFCQUFBQUNBQUFCQUlBQUFML0FBQUFFQUFBQUFVQUJBQUpBQUFBQm1WdVoybHVaUUFFQUFrQUFBQUZiR0ZpWld3QUJBQUpBQUFBRG5KdmQyNWhiV1Z6TG5CeWFXNTBBQVFBQ1FBQUFBcHliM2R6TG5SdmRHRnNBQVFBQ1FBQUFBcGpiMnh6TG5SdmRHRnNBQUFBL2dBQUFQND0ifQ== --&gt;
-
-&lt;div data-pagedtable=&quot;false&quot;&gt;
-  &lt;script data-pagedtable-source type=&quot;application/json&quot;&gt;
-{&quot;columns&quot;:[{&quot;label&quot;:[&quot;SRR1039508&quot;],&quot;name&quot;:[1],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039509&quot;],&quot;name&quot;:[2],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039512&quot;],&quot;name&quot;:[3],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039513&quot;],&quot;name&quot;:[4],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039516&quot;],&quot;name&quot;:[5],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039517&quot;],&quot;name&quot;:[6],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039520&quot;],&quot;name&quot;:[7],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;SRR1039521&quot;],&quot;name&quot;:[8],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]}],&quot;data&quot;:[{&quot;1&quot;:&quot;24633&quot;,&quot;2&quot;:&quot;24527&quot;,&quot;3&quot;:&quot;25699&quot;,&quot;4&quot;:&quot;23124&quot;,&quot;5&quot;:&quot;25508&quot;,&quot;6&quot;:&quot;25998&quot;,&quot;7&quot;:&quot;24662&quot;,&quot;8&quot;:&quot;23991&quot;}],&quot;options&quot;:{&quot;columns&quot;:{&quot;min&quot;:{},&quot;max&quot;:[10],&quot;total&quot;:[8]},&quot;rows&quot;:{&quot;min&quot;:[10],&quot;max&quot;:[10],&quot;total&quot;:[1]},&quot;pages&quot;:{}}}
-  &lt;/script&gt;
-&lt;/div&gt;
-
-&lt;!-- rnb-frame-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-Average of expressed gene across samples is as below.
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBjb3VudCBleHByZXNzZWQgZ2VuZSAocmVhZCBjb3VudCA+PTEpIGZvciBlYWNoIHNhbXBsZVxuYXMuZGF0YS5mcmFtZShhc3NheShhaXJ3YXkpKSAlPiUgIyBjaGFuZ2UgZGF0YSBmb3JtYXQuIE90aGVyd2lzZSwgaXQgd2lsbCBiZSBgRXJyb3IgaW4gVXNlTWV0aG9kKFxcdGJsX3ZhcnNcXClgXG4gIHN1bW1hcmlzZV9hbGwofnN1bSguID49IDEsIG5hLnJtID0gVFJVRSkpICU+JSAjIGNvdW50IGlmIHZhbHVlIGlzID49MS5cbiAgIyBNZWFuIG9mIGV4cHJlc3NlZCBnZW5lIGFjcm9zcyBzYW1wbGVzLlxuICByb3dNZWFucygpXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-# count expressed gene (read count &gt;=1) for each sample
-as.data.frame(assay(airway)) %&gt;% # change data format. Otherwise, it will be `Error in UseMethod(\tbl_vars\)`
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Average of expressed gene across samples is as below.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb3VudCBleHByZXNzZWQgZ2VuZSAocmVhZCBjb3VudCA+PTEpIGZvciBlYWNoIHNhbXBsZVxuYXMuZGF0YS5mcmFtZShhc3NheShhaXJ3YXkpKSAlPiUgIyBjaGFuZ2UgZGF0YSBmb3JtYXQuIE90aGVyd2lzZSwgaXQgd2lsbCBiZSBgRXJyb3IgaW4gVXNlTWV0aG9kKFwidGJsX3ZhcnNcIilgXG4gIHN1bW1hcmlzZV9hbGwofnN1bSguID49IDEsIG5hLnJtID0gVFJVRSkpICU+JSAjIGNvdW50IGlmIHZhbHVlIGlzID49MS5cbiAgIyBNZWFuIG9mIGV4cHJlc3NlZCBnZW5lIGFjcm9zcyBzYW1wbGVzLlxuICByb3dNZWFucygpXG5gYGAifQ== -->
+<pre class="r"><code># count expressed gene (read count &gt;=1) for each sample
+as.data.frame(assay(airway)) %&gt;% # change data format. Otherwise, it will be `Error in UseMethod(&quot;tbl_vars&quot;)`
   summarise_all(~sum(. &gt;= 1, na.rm = TRUE)) %&gt;% # count if value is &gt;=1.
   # Mean of expressed gene across samples.
   rowMeans()</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDI0NzY3Ljc1XG4ifQ== --&gt;
-</code></pre>
-<p>[1] 24767.75</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-The gene which not expressed in any sample is as below.
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGYgPSBhcy5kYXRhLmZyYW1lKGFzc2F5KGFpcndheSkpXG5cbiMgcm93U3VtcygpIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZSB0aGUgc3VtIG9mIGVhY2ggcm93XG4jIGZpbHRlciB0aGUgZGF0YSBmcmFtZSB3aXRoIHRoZSByb3cgd2hpY2ggc3VtIG9mIHRoZSByb3cgaXMgMC5cbmFsbF96ZXJvX3Jvd3MgPC0gZGZbcm93U3VtcyhkZikgPT0gMCwgXVxucHJpbnQoZGltKGFsbF96ZXJvX3Jvd3MpKVxuYGBgXG5gYGAifQ== --&gt;
-
-```r
-```r
-df = as.data.frame(assay(airway))
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDI0NzY3Ljc1XG4ifQ== -->
+<pre><code>[1] 24767.75</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The gene which not expressed in any sample is as below.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYgPSBhcy5kYXRhLmZyYW1lKGFzc2F5KGFpcndheSkpXG5cbiMgcm93U3VtcygpIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZSB0aGUgc3VtIG9mIGVhY2ggcm93XG4jIGZpbHRlciB0aGUgZGF0YSBmcmFtZSB3aXRoIHRoZSByb3cgd2hpY2ggc3VtIG9mIHRoZSByb3cgaXMgMC5cbmFsbF96ZXJvX3Jvd3MgPC0gZGZbcm93U3VtcyhkZikgPT0gMCwgXVxucHJpbnQoZGltKGFsbF96ZXJvX3Jvd3MpKVxuYGBgIn0= -->
+<pre class="r"><code>df = as.data.frame(assay(airway))
 
 # rowSums() function to calculate the sum of each row
 # filter the data frame with the row which sum of the row is 0.
 all_zero_rows &lt;- df[rowSums(df) == 0, ]
 print(dim(all_zero_rows))</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMwNjMzICAgICA4XG4ifQ== --&gt;
-</code></pre>
-<p>[1] 30633 8 ```</p>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMwNjMzICAgICA4XG4ifQ== -->
+<pre><code>[1] 30633     8</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->

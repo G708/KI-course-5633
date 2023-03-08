@@ -2,9 +2,7 @@
 title: "Task5"
 author: "Gina Miku Oba"
 date: "2023-03-06"
-output:
-  html_document:
-    df_print: paged
+output: html_notebook
 ---
 
 # Task5 - Using R example datasets

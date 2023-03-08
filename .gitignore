@@ -1,6 +1,9 @@
 # Large Data 
 data
 
+# Mac OS
+.DS_Store
+
 # History files
 .Rhistory
 .Rapp.history

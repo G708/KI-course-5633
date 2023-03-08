@@ -1,0 +1,156 @@
+---
+title: "Task8"
+author: "Gina Miku Oba"
+date: "2023-03-08"
+output: html_notebook
+---
+
+# Task8
+
+Install Tidybiology package, which includes the data ‘chromosome’ and ‘proteins’.
+
+```{r}
+devtools::install_github("hirscheylab/tidybiology")
+```
+```{r}
+library("tidybiology")
+library("tidyverse")
+library("ggplot2")
+```
+
+`chromosome` data contains 24 rows (chromosome from 1 to 22 and X,Y) with 14 columns (information of the chromosome such as basepairs and protein coding gene numbers).
+
+```{r}
+print(head(chromosome))
+print(dim(chromosome))
+print(chromosome$id)
+```
+
+`proteins` data contains 20430 rows (proteins) with 8 columns (infomation of the proteins such as amino asid length and amino asid sequence). 
+
+```{r}
+print(head(proteins))
+print(dim(proteins))
+```
+
+## a. summary statistics of `chromosome` data using tidyverse
+
+
+```{r}
+
+chromosome %>% select(variations, protein_codinggenes, mi_rna) %>%
+  # add extra M to separate after
+  summarise(across(everything(), list(Mmean = mean, Mmedian = median, Mmaximum = max))) %>%
+  # Shaped to table type
+  # if names_sep is just "_", protein_codinggenes and mi_rna also separated.
+  # use "_M" to separate
+  pivot_longer(cols = everything(), names_to = c(".value", "variable"), names_sep = "_M")
+
+```
+
+## b. Visualize chromosome size distribution
+
+chromosome size is `length_mm`. Each chromosome size is plotted as below.
+
+```{r}
+p <- ggplot(chromosome,aes(y=length_mm,  x= id)) +
+  geom_bar(stat = "identity")
+print(p)
+```
+
+Histogram is the plot to visualize distribution. I plotted with binsize=10 and binsize=20. The appearance of the peaks of the distribution differs depending on the bin size, so I plotted with binsize=10 and binsize=20; when binsize is 10, the distribution appears to be normally distributed, and when binsize is 20, it does not show a clear distribution. Mean of the chromosome length is 43.83, which is more easily seen in the plot when binsize is 10.
+
+```{r}
+print(mean(chromosome$length_mm))
+
+# wide binsize
+bin = 10
+p <- ggplot(chromosome,aes(x=length_mm)) +
+  geom_histogram(bins = bin)
+print(p)
+
+# sharp binsize
+bin = 20
+p <- ggplot(chromosome,aes(x=length_mm)) +
+  geom_histogram(bins = bin)
+print(p)
+```
+
+## c. Does the number of protein coding genes or miRNAs correlate with the length of the chromosome?
+
+Both protein coding genes and miRNAs positively correlate with the chromosome length, but miRNA show a higher correlation (0.74) than protein coding genes (0.61).
+
+1. protein coding genes vs length visualization
+
+```{r}
+corr <- cor(chromosome$protein_codinggenes, chromosome$length_mm)
+print(corr)
+
+p <- ggplot(chromosome,aes(x=protein_codinggenes , y=length_mm)) +
+  geom_smooth(method=lm, se=FALSE, formula = y ~ x) + 
+  annotate("text",x=-Inf,y=Inf,label=paste("correlation:", round(corr,2)),hjust=-.2,vjust=2) +
+  geom_point()
+print(p)
+```
+
+
+2. miRNAs vs length visualization
+
+```{r}
+corr <- cor(chromosome$mi_rna, chromosome$length_mm)
+print(corr)
+
+p <- ggplot(chromosome,aes(x=mi_rna , y=length_mm)) +
+  geom_smooth(method=lm, se=FALSE, formula = y ~ x) + 
+  annotate("text",x=-Inf,y=Inf,label=paste("correlation:", round(corr,2)),hjust=-.2,vjust=2) +
+  geom_point()
+print(p)
+```
+
+## d. summary statistics of `proteins`.
+
+1. statistics
+
+```{r}
+
+proteins %>% select(length, mass) %>%
+  # add extra M to separate after
+  summarise(across(everything(), list(Mmean = mean, Mmedian = median, Mmaximum = max))) %>%
+  # Shaped to table type
+  # if names_sep is just "_", protein_codinggenes and mi_rna also separated.
+  # use "_M" to separate
+  pivot_longer(cols = everything(), names_to = c(".value", "variable"), names_sep = "_M")
+
+```
+
+2. Visualization
+
+First, the correlation of length and mass is visualized same as chromosome. It shows that length and mass are highly correlated. But there seems scale of the large protein is differ with small proteins. In the second plot, a log10 scale transformation was performed for both x- and y-axes. This showed that the length and weight of the protein were highly correlated.
+
+```{r}
+corr <- cor(proteins$length, proteins$mass)
+print(corr)
+
+p <- ggplot(proteins,aes(x=length , y=mass)) +
+  geom_smooth(method=lm, se=FALSE, formula = y ~ x) + 
+  geom_point() +
+  annotate("text",x=-Inf,y=Inf,label=paste("correlation:", round(corr,2)),hjust=-.2,vjust=2)
+print(p)
+```
+
+```{r}
+# log - log scale
+p <- ggplot(proteins,aes(x=length , y=mass)) +
+  geom_smooth(method=lm, se=FALSE, formula = y ~ x) + 
+  geom_point() +
+  scale_x_continuous(trans='log10') +
+  scale_y_continuous(trans='log10') +
+  annotate("text",x=-Inf,y=Inf,label=paste("correlation:", round(corr,2)),hjust=-.2,vjust=2)
+print(p)
+```
+
+
+
+```{r}
+sessionInfo()
+```
