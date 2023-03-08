@@ -2,7 +2,9 @@
 title: "Task5"
 author: "Gina Miku Oba"
 date: "2023-03-06"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Task5 - Using R example datasets
@@ -22,7 +24,7 @@ This data contains 84 observations (row) and 5 variables (column).
 help(CO2)
 ```
 
-The CO2 dataset is from an experiment on the cold tolerance of the grass species _Echinochloa crus-galli_ from Quebec and Mississippi. This data contains 84 observations (row) and 5 variables (column). There are 3 biological replicates for each 4 condition (Quebec-nonchilled, Quebec-chilled, Mississippi-nonchilled, Mississippi-chilled). And 7 technical replicates for each sample (3 x 4 x 7 = 84). 5 variables include the unique identifier for each plant (*Plant*), the origin of the plant (*Type*),  treatment (*Treatment*, which is `nonchilled` or `chilled`), the ambient carbon dioxide concentration (*conc*), the carbon dioxide uptake rates (*uptake*) of the plant.
+The CO2 dataset is from an experiment on the cold tolerance of the grass species _Echinochloa crus-galli_ from Quebec and Mississippi. This data contains 84 observations (row) and 5 variables (column). There are 3 biological replicates for each 4 condition (Quebec-nonchilled, Quebec-chilled, Mississippi-nonchilled, Mississippi-chilled) and 7 different ambient carbon dioxide concentration for each sample (3 x 4 x 7 = 84). 5 variables include the unique identifier for each plant (*Plant*), the origin of the plant (*Type*),  treatment (*Treatment*, which is `nonchilled` or `chilled`), the ambient carbon dioxide concentration (*conc*), the carbon dioxide uptake rates (*uptake*) of the plant.
 
 ## 3. Average and median CO2 uptake of the plants from Quebec and Misissippi.
 Functions to compute Average and median in R is as below.
