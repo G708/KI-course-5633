@@ -76,9 +76,11 @@ The answer is 250500.
 
 ## 5.  How many pairwise comparisons are there for 100 genes?
 Number of pairwise comparisons of 100 gene is 
+
 $$
 {}_{100} \mathrm{C}_2 = \frac{100!}{2!(100-2)!}
-$$.
+$$
+
 
 It not consider order of the pair gene. R has function `choose(n,k)` to compute n choose x. 
 
@@ -90,9 +92,11 @@ The answer is 4950.
 
 ## 6. And how many ways to arrange 100 genes in triples?
 A, B, C and C, B, A are different for counting the arrangement of 100 genes into triples. Number of the arrangement of 100 genes is 
+
 $$
 {}_{100} \mathrm{P}_3 = \frac{100!}{(100-3)!} = {}_{100} \mathrm{C}_2 \times 3!
 $$
+
 `factorial(x)` is function to compute x!.
 
 ```{r}
