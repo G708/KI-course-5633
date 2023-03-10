@@ -6,6 +6,7 @@ date: "2023-03-10"
 
 # Task1 - Literature
 Read the research article of the hands-on working group.
+
 Paper : Human White Adipose Tissue Displays Selective Insulin Resistance in the Obese State. PMID: 33863803
 
 ## 2a. What is the medically relevant insight from the article?
