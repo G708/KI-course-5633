@@ -80,7 +80,7 @@ print(p)
 
 Both protein coding genes and miRNAs positively correlate with the chromosome length, but miRNA show a higher correlation (0.74) than protein coding genes (0.61).
 
-1. protein coding genes vs length visualization
+### 1. protein coding genes vs length visualization
 
 ```{r}
 corr <- cor(chromosome$protein_codinggenes, chromosome$length_mm)
@@ -94,7 +94,7 @@ print(p)
 ```
 
 
-2. miRNAs vs length visualization
+### 2. miRNAs vs length visualization
 
 ```{r}
 corr <- cor(chromosome$mi_rna, chromosome$length_mm)
@@ -109,7 +109,7 @@ print(p)
 
 ## d. summary statistics of `proteins`.
 
-1. statistics
+### 1. statistics
 
 ```{r}
 
@@ -123,7 +123,7 @@ proteins %>% select(length, mass) %>%
 
 ```
 
-2. Visualization
+### 2. Visualization
 
 First, the correlation of length and mass is visualized same as chromosome. It shows that length and mass are highly correlated. But there seems scale of the large protein is differ with small proteins. In the second plot, a log10 scale transformation was performed for both x- and y-axes. This showed that the length and weight of the protein were highly correlated.
 

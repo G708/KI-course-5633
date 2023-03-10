@@ -16,11 +16,10 @@ $$
 ```{r}
 ratio_mean_median <- function(x){
   return(mean(x) / median(x))
-}
-
+  }
 ```
 
-Try test:
+Try test on random vector:
 ```{r}
 # Generate a random vector of 10 components, each with a value between 0 and 1.
 vector <- runif(10, 0, 1) 
@@ -40,7 +39,6 @@ if (result == mean(vector)/median(vector)){
 }else{
   print("Function not works")
 }
-
 ```
 
 ## 2. A function that ignore the lowest and the hightest value from given vector and calculate the mean.
@@ -66,7 +64,6 @@ print(paste("median:", median(vector)))
 # print mean and trim_mean
 print(paste("mean:", mean(vector)))
 print(paste("trim_mean:", trim_mean(vector)))
-
 ```
 The advantage of this trimmed mean is that it is robust to outliers or the heavy tail data distribution. 
 Try vector with extreme value:
@@ -81,7 +78,6 @@ print(paste("median:", median(vector)))
 # print mean and trim_mean
 print(paste("mean:", mean(vector)))
 print(paste("trim_mean:", trim_mean(vector)))
-
 ```
 By trimming the highest and lowest values, the trimmed mean was closer to the median.
 
