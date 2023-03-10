@@ -2,7 +2,7 @@
 title: "Task6"
 author: "Gina Miku Oba"
 date: "2023-03-07"
-output: html_notebook
+output: github_document
 ---
 # Task6 - R Function
 

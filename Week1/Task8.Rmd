@@ -2,7 +2,7 @@
 title: "Task8"
 author: "Gina Miku Oba"
 date: "2023-03-08"
-output: html_notebook
+output: github_document
 ---
 
 # Task8

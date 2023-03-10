@@ -2,7 +2,7 @@
 title: "Task4"
 author: "Gina Miku Oba"
 date: "2023-03-06"
-output: html_notebook
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

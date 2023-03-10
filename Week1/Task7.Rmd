@@ -2,7 +2,7 @@
 title: "Task7"
 author: "Gina Miku Oba"
 date: "2023-03-07"
-output: html_notebook
+output: github_document
 ---
 
 # Task7 - Basic visualization with R
@@ -27,6 +27,7 @@ print(unique_values)
 
 sum(magic_guys$species == "jedi")
 ```
+
 The dataset named magic_guys.csv contains 100 observations (row) which include 50 individuals of `jedi` and 50 individuals of `sith`. There are four variables (column), which are unique id, species (`jedi` or `sith`), length and weight.
 
 ### a-2. Visualization of histograms - `hist()`
@@ -35,6 +36,7 @@ Plot distribution of body heights using `hist()`:
 # This plot will be plot all data as one distribution.
 hist(magic_guys$length)
 ```
+
 If all data in magic_guys$length is passed to the `hist()`, all data is plotted in the same distribution.
 
 If we want to compare the distributions of the body heights of the two species, we need to separate data of 2 species before plot histogram to separate distribution of 2 samples. It can be observed that the group of "jedi" has a wider dispersion in taller population than the group of "sith".
@@ -61,6 +63,7 @@ ggplot(magic_guys,aes(x=length)) +
   geom_histogram(binwidth = 20) +
   theme_bw() # white back ground theme
 ```
+
 If we pass all data of length in magic_guys, the output plot shows only one distribution. To plot each distribution for the two species, we can use the options `fill` and `position`. The resulting plot is almost the same, but the default rule of the bin is different with `hist()` and `ggplot2`.
 ```{r}
 # set fill to plot 2 species separately
