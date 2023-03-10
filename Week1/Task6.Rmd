@@ -8,10 +8,12 @@ output: github_document
 
 ## 1. A function that calculates the ratio of the mean and the median of a given vector.
 Input of the function is given vector and output of the function is the ratio of the mean and the median.
+
 $$
 f(x) = \frac{mean(x)}{median(x)} \\
 \text{where, }x = \{x_1, x_2, ..., x_n\}
 $$
+
 
 ```{r}
 ratio_mean_median <- function(x){

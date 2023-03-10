@@ -8,7 +8,9 @@ Gina Miku Oba
 ## 1. A function that calculates the ratio of the mean and the median of a given vector.
 
 Input of the function is given vector and output of the function is the
-ratio of the mean and the median. $$
+ratio of the mean and the median.
+
+$$
 f(x) = \frac{mean(x)}{median(x)} \\
 \text{where, }x = \{x_1, x_2, ..., x_n\}
 $$
@@ -27,21 +29,21 @@ vector <- runif(10, 0, 1)
 print(vector)
 ```
 
-    ##  [1] 0.69528372 0.97081159 0.72033951 0.95534629 0.27936788 0.72894444
-    ##  [7] 0.43696733 0.13007022 0.14434471 0.05637758
+    ##  [1] 0.09043364 0.56039604 0.55568637 0.96031764 0.51601451 0.55126713
+    ##  [7] 0.22929616 0.26628807 0.14052216 0.96067508
 
 ``` r
 # print mean and median
 print(paste("mean:", mean(vector)))
 ```
 
-    ## [1] "mean: 0.511785328621045"
+    ## [1] "mean: 0.483089677873068"
 
 ``` r
 print(paste("median:", median(vector)))
 ```
 
-    ## [1] "median: 0.566125528072007"
+    ## [1] "median: 0.53364081599284"
 
 ``` r
 # print ratio of mean and median 
@@ -49,7 +51,7 @@ result <- ratio_mean_median(vector)
 print(result)
 ```
 
-    ## [1] 0.9040139
+    ## [1] 0.9052712
 
 ``` r
 # print if function works fine
@@ -86,27 +88,27 @@ vector <- runif(10, 0, 1)
 print(vector)
 ```
 
-    ##  [1] 0.44238432 0.67333230 0.16618733 0.79236806 0.74682731 0.05275395
-    ##  [7] 0.57973204 0.59655261 0.55482136 0.89286302
+    ##  [1] 0.99096315 0.46809563 0.16775805 0.39400477 0.27496038 0.02930822
+    ##  [7] 0.53292353 0.23619284 0.38348189 0.69666559
 
 ``` r
 print(paste("median:", median(vector)))
 ```
 
-    ## [1] "median: 0.58814232761506"
+    ## [1] "median: 0.388743326300755"
 
 ``` r
 # print mean and trim_mean
 print(paste("mean:", mean(vector)))
 ```
 
-    ## [1] "mean: 0.549782230798155"
+    ## [1] "mean: 0.417435403075069"
 
 ``` r
 print(paste("trim_mean:", trim_mean(vector)))
 ```
 
-    ## [1] "trim_mean: 0.569025667384267"
+    ## [1] "trim_mean: 0.394260332948761"
 
 The advantage of this trimmed mean is that it is robust to outliers or
 the heavy tail data distribution. Try vector with extreme value:
@@ -119,27 +121,27 @@ vector <- append(vector, 10)
 print(vector)
 ```
 
-    ##  [1]  0.78708000  0.34745111  0.51816333  0.19856377  0.27578365  0.78428501
-    ##  [7]  0.01558995  0.69500849  0.93741776 10.00000000
+    ##  [1]  0.10519219  0.98352282  0.77933591  0.20712216  0.79607092  0.60857962
+    ##  [7]  0.83973060  0.86330618  0.03660586 10.00000000
 
 ``` r
 print(paste("median:", median(vector)))
 ```
 
-    ## [1] "median: 0.606585909961723"
+    ## [1] "median: 0.787703414913267"
 
 ``` r
 # print mean and trim_mean
 print(paste("mean:", mean(vector)))
 ```
 
-    ## [1] "mean: 1.45593430711888"
+    ## [1] "mean: 1.5219466252951"
 
 ``` r
 print(paste("trim_mean:", trim_mean(vector)))
 ```
 
-    ## [1] "trim_mean: 0.567969140218338"
+    ## [1] "trim_mean: 0.647857549454784"
 
 By trimming the highest and lowest values, the trimmed mean was closer
 to the median.

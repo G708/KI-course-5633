@@ -595,14 +595,16 @@ print(p)
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](Task7_files/figure-gfm/unnamed-chunk-26-1.png)<!-- --> \### 3. Dose
-carbon dioxide uptake rates distribution is differ between the origin of
-the plant? The above plot visualized the differences in response by
-region of origin to the effect of the treatment, but it was difficult to
-see the differences in the original region of origin. Therefore, we drew
-a plot that was split by treatment and color by region of origin. The
-plot showed that carbon dioxide uptake rates were lower in Mississippi
-than in Quebec, irrespective of treatment.
+![](Task7_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+### 3. Dose carbon dioxide uptake rates distribution is differ between the origin of the plant?
+
+The above plot visualized the differences in response by region of
+origin to the effect of the treatment, but it was difficult to see the
+differences in the original region of origin. Therefore, we drew a plot
+that was split by treatment and color by region of origin. The plot
+showed that carbon dioxide uptake rates were lower in Mississippi than
+in Quebec, irrespective of treatment.
 
 ``` r
 p <- ggplot(CO2,aes(x=conc, y=uptake, color = Type)) + 
@@ -615,8 +617,10 @@ print(p)
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](Task7_files/figure-gfm/unnamed-chunk-27-1.png)<!-- --> \### 4. What
-is the overall conclusion of carbon dioxide uptake rates in 4 condition?
+![](Task7_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+### 4. What is the overall conclusion of carbon dioxide uptake rates in 4 condition?
+
 To conclude this data, the carbon dioxide uptake rate increases with the
 environmental carbon dioxide concentration and saturates when a certain
 concentration is reached, the amount of saturation depending on the
