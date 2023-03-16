@@ -1,0 +1,142 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Recreating plot of Fig2.A
+
+input data:
+1. ExpressionData.RData
+2. Cohort.RData
+
+Workflow
+1. run edgeR to get insuline resopond gene in OB, POB, NO
+2. annotate Tags in to gene?
+3. count overlap of those groups
+4. plot barplot
+
+
+## edgeR workflow
+### load the datas
+All the data are in Gitlab. Expression count data is loaded.
+y will have the matrix data of row with gene and column with sample. The code below, group of the samples are correspond to `cohort$newcond2` which is `Condition`. (Maybe able to rewrite to just `Condition`?)
+
+```{r}
+df.pairs<-phase2.female.counts
+y <- DGEList(counts=df.pairs,group = cohort$newcond2)
+```
+
+Count data is phase2.female.counts and DGEList is to create object for the input of the edgeR.
+
+### Create model
+To do Generalized Linear Model (GLM) (which is recommended model to compare multiple groups), we need to set model matrix. `~0+Condition+IDs` is the model equation of this study. `0` explains this model dose not account intercept and not consider background effect of the each groups. ChatGPT say this is good if samples have more possible variables to be effect the expression value.
+
+```{r}
+design<-model.matrix(~0+Condition+IDs,data=y$samples)
+```
+
+Then first variables "f0" to removed. Why? This is likely a filtering step to remove any unwanted or redundant columns from the matrix. next line is to removes any columns from the design matrix that have zero variance (i.e., the same value in all rows), as these columns will not contribute to the analysis.
+```{r}
+design <- design[,!grepl("f0", colnames(design))]
+design<-design[, colSums(design != 0) > 0]
+```
+
+
+This line will normalize count matrix using RLE method. RLE also used in DESeq. By this, It means, result of edgeR and DESeq will be close? Why not TMM? RLE directly normalize row count and TMM will pre-normalize counts by library sizes. TMM usualy use the whose upper quartile is closest to the mean upper quartile for all the libraries. And RLE performe a geometric mean of all sample values. Maybe bacouse RLE take account of all data so they appried.
+```{r}
+y <- calcNormFactors(y,norm.method="RLE")
+```
+
+
+This line will caluculate distribution for each gene using binorm-model. Code below takes lot of time becouse culculate for each genes. 
+```{r}
+y <- estimateDisp(y,design)
+```
+
+This will fit the model based on the design.
+```{r}
+fit <- glmFit(y,design,robust=T)
+```
+
+`makeContrasts` will create defines contrasts of interest between different conditions, in this data,  HivsF.NO, HivsF.OB.0, HivsF.OB.2.
+(Maybe chage name to HivsF.POB is understandable?)
+```{r}
+my.contrasts<-makeContrasts(
+  HivsF.NO=ConditionNO.h0,
+  HivsF.OB.0=ConditionOBESE.h0,
+  HivsF.OB.2=ConditionOBESE.h2-ConditionOBESE.f2,
+  levels=design)
+```
+
+
+
+### Run script
+
+```{r}
+library(edgeR)
+
+###################################
+# loading data
+###################################
+load("/home/rstudio/work/data/ExpressionTables.RData")
+load("/home/rstudio/work/data/Annotation.RData")
+load("/home/rstudio/work/data/Cohort.RData")
+
+
+##################################
+# DE analysis of paired samples
+###################################
+IDs<-paste(cohort$OB_NO,as.factor(cohort$IDs),sep=".")
+Condition<-cohort$newcond2
+df.pairs<-phase2.female.counts
+
+
+# DE Analysis
+y <- DGEList(counts=df.pairs,group = cohort$newcond2)
+design<-model.matrix(~0+Condition+IDs,data=y$samples)
+design <- design[,!grepl("f0", colnames(design))]
+design<-design[, colSums(design != 0) > 0]
+colnames(design)<-make.names(colnames(design))
+y <- calcNormFactors(y,norm.method="RLE")
+y <- estimateDisp(y,design)
+fit <- glmFit(y,design,robust=T)
+my.contrasts<-makeContrasts(
+  HivsF.NO=ConditionNO.h0,
+  HivsF.OB.0=ConditionOBESE.h0,
+  HivsF.OB.2=ConditionOBESE.h2-ConditionOBESE.f2,
+  levels=design)
+
+contrasts<-colnames(my.contrasts)
+myfun <- function(filex) {
+  print(filex)
+  lrt <- glmLRT(fit, contrast=my.contrasts[,filex])
+  out.top=topTags(lrt,n=Inf,adjust.method='BH')
+  out.adj=out.top$table
+  out.adj.1<-out.adj
+  if(nrow(out.adj.1)==0){
+    return()
+  }else{
+    out.adj.1$Contrast<-filex
+    out.adj.1$TC<-rownames(out.adj.1)
+    out.adj.1$updown<-ifelse(out.adj.1$logFC>0,"up","down")
+    return(out.adj.1)
+  }
+}
+
+y.list<-(lapply(contrasts, myfun))
+tab<-do.call(rbind, y.list)
+tab$Sign<-ifelse(tab$FDR<0.05,"sign","no")
+res.count <- table(tab[tab$Sign=="sign",]$Contrast,tab[tab$Sign=="sign",]$updown )
+res.count 
+
+save(tab,file="/home/rstudio/work/data/DE_23NO_23OB_23POB.RData")
+
+
+```
+
+
+## Annotate gene?
+insuline respond CAGE TAG was extructed.
+Also we want the gene name as well.
+
+
+### Run script

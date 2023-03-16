@@ -1,0 +1,16 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Check how indivisuals cure by surjury.
+
+input data: 
+- /home/rstudio/work/data/ClinicalTable Cell Reports.txt
+
+workflow:
+Q1. Is there reduce amount of BMI and/or Waist/Hip value ... is corespond to change of the expression profile cluster?
+1. Cluster indivisual by BMI and/or Waist/Hip value ... (OB - POB value of body condition)
+2. Cluster indivisual by OB - POB count of insuline responde gene profile.
+
+Problem: Is it OK to just OB - POB count? Need normalization?
+
