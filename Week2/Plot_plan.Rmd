@@ -7,10 +7,82 @@ output: html_notebook
 input data: 
 - /home/rstudio/work/data/ClinicalTable Cell Reports.txt
 
-workflow:
-Q1. Is there reduce amount of BMI and/or Waist/Hip value ... is corespond to change of the expression profile cluster?
+workflow1:
+Q1. Is change of body feature (reduce amount of BMI and/or Waist/Hip value ...) is correspond to change of the expression profile cluster?
+
 1. Cluster indivisual by BMI and/or Waist/Hip value ... (OB - POB value of body condition)
 2. Cluster indivisual by OB - POB count of insuline responde gene profile.
+3. Compare 1 and 2 cluster with rand index to conclude similality of the cluster.
 
 Problem: Is it OK to just OB - POB count? Need normalization?
+-> It would be better not to take difference of insuline responde gene profile, but extract insuline response gene in sub group.
 
+Workflow2:
+1. Modify table to have 2 column OB vs POB.  
+2. Check the distribution of OB - POB value of clinic values to get sub groups of the indivisuals. -> better cured vs less cured
+3. extract insulin response gene in those sub groups.
+4. Check the different insulin response gene between OB sub and POB sub group -> extention of Fig2a.
+
+Q2. Dose 7 enriched TF has same activity ratio though the target?
+1. create small directed network of 7 TFs to insuline responde gene.
+2. culculate ratio of the target activity (induce, attenuate)
+3. Find TF which is commonly enriched but differentry active the targets.
+
+-> This analysis may not be find difference because correlation of the insulin responce gene profile between groups in FigureS2 shows correlation.
+
+# Q1
+```{r}
+clinic <- read_tsv("~/work/data/ClinicalTable Cell Reports.txt")
+```
+
+## indivisual difference between OB vs POB
+Add W/H value which is also one of the score to varidate obisity.
+```{r}
+clinic$wh <- clinic$Waist / clinic$Hip 
+```
+
+get person ID to get match of person.
+```{r}
+
+clinic$ID <- substr(clinic$Patnr, start = 3, stop = nchar(clinic$Patnr))
+clinic$Location <- substr(clinic$Patnr, start = 1, stop = 2)
+
+```
+
+
+```{r}
+clinic %>%
+  filter(!Gender == "M") %>% 
+  filter(Location == "NO") %>% 
+  drop_na() %>%
+  group_by(Type) %>%
+  count()
+```
+
+
+
+```{r}
+p <- ggplot(clinic,aes(x=Type, y=BMI, color = Type)) +
+  geom_boxplot(aes(color = Type)) + 
+  geom_point(aes(color = Type)) + 
+  geom_line(aes(group=interaction(Type,ID))) +
+  facet_wrap(~Gender, ncol=2)
+print(p)
+```
+
+```{r}
+p <- ggplot(clinic,aes(x=Type, y=wh, color = Type)) +
+  geom_boxplot(aes(color = Type)) + 
+  geom_point(aes(color = Type)) + 
+  facet_wrap(~Gender, ncol=2)
+print(p)
+```
+
+Dimention reduction.
+```{r}
+p <- ggplot(clinic,aes(x=Type, y=wh, color = Type)) +
+  geom_boxplot(aes(color = Type)) + 
+  geom_point(aes(color = Type)) + 
+  facet_wrap(~Gender, ncol=2)
+print(p)
+```

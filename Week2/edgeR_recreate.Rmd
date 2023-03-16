@@ -10,9 +10,8 @@ input data:
 
 Workflow
 1. run edgeR to get insuline resopond gene in OB, POB, NO
-2. annotate Tags in to gene?
-3. count overlap of those groups
-4. plot barplot
+2. count overlap of those groups
+3. plot barplot
 
 
 ## edgeR workflow
@@ -134,9 +133,104 @@ save(tab,file="/home/rstudio/work/data/DE_23NO_23OB_23POB.RData")
 ```
 
 
-## Annotate gene?
-insuline respond CAGE TAG was extructed.
-Also we want the gene name as well.
+## count overlap of those groups
+
 
 
 ### Run script
+```{r}
+########################## DE tables ##########################
+# Extract only DE tc. It also create additional 3 dataframes, one per condition(NO,OBESE and POST-OBESE)
+glm<-tab
+
+DE.tab<-function(tabs){
+  DE<-tabs[tabs$FDR<0.05,]
+  DE<-merge(DE,annotation,by="TC")
+  
+  return(DE)
+}
+
+DE.tab.specific<-function(tabs,contrast){
+  out<-tabs[tabs$Contrast==contrast,]
+  out$Sign<-ifelse(out$FDR<0.05,"sign","no")
+  out<-merge(out,annotation,by="TC")
+  out$SignUpDown<-ifelse((out$Sign=="sign" & out$updown=="up"),"up",ifelse((out$Sign=="sign" & out$updown=="down"),"down","non-significant"))
+  out$log10FDR<-(-log10(out$FDR))
+  return(out)
+}
+
+#Overall DE
+
+DE.glm<-DE.tab(glm)
+#NO DE tables
+NO.glm<-DE.tab.specific(glm,"HivsF.NO")
+
+#OBESE DE tables
+OB.glm<-DE.tab.specific(glm,"HivsF.OB.0")
+
+#POST-OBESE DE tables
+POB.glm<-DE.tab.specific(glm,"HivsF.OB.2")
+
+########################## DE tables ##########################
+# Extract only DE tc. It also create additional 3 dataframes, one per condition(NO,OBESE and POST-OBESE)
+glm<-tab
+
+DE.tab<-function(tabs){
+  DE<-tabs[tabs$FDR<0.05,]
+  DE<-merge(DE,annotation,by="TC")
+  
+  return(DE)
+}
+
+DE.tab.specific<-function(tabs,contrast){
+  out<-tabs[tabs$Contrast==contrast,]
+  out$Sign<-ifelse(out$FDR<0.05,"sign","no")
+  out<-merge(out,annotation,by="TC")
+  out$SignUpDown<-ifelse((out$Sign=="sign" & out$updown=="up"),"up",ifelse((out$Sign=="sign" & out$updown=="down"),"down","non-significant"))
+  out$log10FDR<-(-log10(out$FDR))
+  return(out)
+}
+
+#Overall DE
+
+DE.glm<-DE.tab(glm)
+#NO DE tables
+NO.glm<-DE.tab.specific(glm,"HivsF.NO")
+
+#OBESE DE tables
+OB.glm<-DE.tab.specific(glm,"HivsF.OB.0")
+
+#POST-OBESE DE tables
+POB.glm<-DE.tab.specific(glm,"HivsF.OB.2")
+
+########################## Add Common_Specific to the overall DE table ##########################
+
+NO_POB<-(intersect(NO.glm[NO.glm$FDR<0.05,]$TC,POB.glm[POB.glm$FDR<0.05,]$TC))
+NO_OB<-(intersect(NO.glm[NO.glm$FDR<0.05,]$TC,OB.glm[OB.glm$FDR<0.05,]$TC))
+OB_POB<-(intersect(OB.glm[OB.glm$FDR<0.05,]$TC,POB.glm[POB.glm$FDR<0.05,]$TC))
+NO_OB_POB<-intersect(intersect(NO.glm[NO.glm$FDR<0.05,]$TC,OB.glm[OB.glm$FDR<0.05,]$TC),POB.glm[POB.glm$FDR<0.05,]$TC)
+
+NO_POB_2<-NO_POB[!NO_POB %in% NO_OB_POB]
+NO_OB_2<-NO_OB[!NO_OB %in% NO_OB_POB]
+OB_POB_2<-OB_POB[!OB_POB %in% NO_OB_POB]
+
+
+DE.glm$Comm_Spec<-ifelse(DE.glm$TC %in% NO_POB & (!(DE.glm$TC %in% NO_OB_POB)) ,"NO_POB"  
+                         ,ifelse(DE.glm$TC %in% NO_OB & (!(DE.glm$TC %in% NO_OB_POB)),"NO_OB"
+                                 ,ifelse(DE.glm$TC %in% OB_POB & (!(DE.glm$TC %in% NO_OB_POB)),"OB_POB"
+                                         ,ifelse(DE.glm$TC %in% NO_OB_POB,"NO_OB_POB",DE.glm$Contrast))))
+NO_spec<-DE.glm[DE.glm$Comm_Spec=="HivsF.NO",]$TC
+OB_spec<-DE.glm[DE.glm$Comm_Spec=="HivsF.OB.0",]$TC
+POB_spec<-DE.glm[DE.glm$Comm_Spec=="HivsF.OB.2",]$TC
+
+NO.glm.sign<-unique(merge(NO.glm[NO.glm$FDR<0.05,],DE.glm[, c("TC", "Comm_Spec")], by = "TC"))
+OB.glm.sign<-unique(merge(OB.glm[OB.glm$FDR<0.05,],DE.glm[, c("TC", "Comm_Spec")], by = "TC"))
+POB.glm.sign<-unique(merge(POB.glm[POB.glm$FDR<0.05,],DE.glm[, c("TC", "Comm_Spec")], by = "TC"))
+
+NO.glm.sign.2<-data.frame(unique(merge(NO.glm,DE.glm[, c("TC", "Comm_Spec")], by = "TC",all.x=T)))
+OB.glm.sign.2<-unique(merge(OB.glm,DE.glm[, c("TC", "Comm_Spec")], by = "TC",all.x=T))
+POB.glm.sign.2<-unique(merge(POB.glm,DE.glm[, c("TC", "Comm_Spec")], by = "TC",all.x=T))
+
+```
+
+
