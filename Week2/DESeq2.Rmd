@@ -1,0 +1,207 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# run DESeq2
+
+
+```{r}
+library("DESeq2")
+library("ggplot2")
+
+###################################
+# loading data
+###################################
+load("/home/rstudio/work/data/ExpressionTables.RData")
+load("/home/rstudio/work/data/Annotation.RData")
+load("/home/rstudio/work/data/Cohort.RData")
+clinic <- read_tsv("~/work/data/ClinicalTable Cell Reports.txt")
+
+```
+
+
+sub gourp
+```{r}
+n=6
+
+Ins <- get_sorted(merged_matrix, "Ins")
+Ins_head <- head(Ins, n)
+Ins_tail <- tail(Ins, n)
+
+# get NO with matched distribution with POB+ and POB-
+set.seed(123)
+
+load("/home/rstudio/work/data/Cohort.RData")
+
+POBp <- clinic %>% 
+    dplyr::filter(Patnr %in% Ins_head$Patnr)
+  
+POBm <- clinic %>% 
+    dplyr::filter(Patnr %in% Ins_tail$Patnr)
+  
+NOs <- clinic %>% dplyr::filter(Type =="NO")
+select_NO <- NOs %>%
+    dplyr::filter(max(POBp$Age) > Age,  Age> min(POBp$Age)) %>%
+    dplyr::filter(max(POBp$BMI) > BMI,  BMI> min(POBp$BMI)) %>%
+    dplyr::filter(max(POBp$M_v_rde_60_120) > M_v_rde_60_120,  M_v_rde_60_120> min(POBp$M_v_rde_60_120)) %>%
+    dplyr::filter(Patnr %in% cohort$Patnr) %>%
+    sample_n(6)
+
+OBp_ID <- sample(Ins_head$Patnr, 3)
+OBm_ID <- sample(Ins_tail$Patnr, 3)
+OB_ID <- c(OBp_ID, OBm_ID)
+
+# Data to run edgeR
+print(OB_ID) # OB group
+print(select_NO$Patnr) # NO group
+print(Ins_head$Patnr) # POB+ group
+print(Ins_tail$Patnr) # POB- group
+
+# column names in the count matrix
+OB_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "OB") %>%
+  dplyr::filter(Patnr %in% OB_ID) %>%
+  select(Cond)
+
+
+NO_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "NO") %>%
+  dplyr::filter(Patnr %in% select_NO$Patnr) %>%
+  select(Cond)
+
+POBp_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "POB") %>%
+  dplyr::filter(Patnr %in% Ins_head$Patnr) %>%
+  select(Cond)
+
+
+POBm_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "POB") %>%
+  dplyr::filter(Patnr %in% Ins_tail$Patnr) %>%
+  select(Cond)
+
+```
+
+
+```{r}
+select_sample <- c(OB_col$Cond, NO_col$Cond, POBp_col$Cond, POBm_col$Cond)
+
+load("/home/rstudio/work/data/Cohort.RData")
+# subset cohort file
+cohort_2 <- cohort %>%
+  dplyr::filter(Cond %in% select_sample)
+
+cohort_2$group <- ifelse(cohort_2$Cond %in% OB_col$Cond, "OB", 
+                           ifelse(cohort_2$Cond %in% NO_col$Cond, "NO", 
+                                  ifelse(cohort_2$Cond %in% POBp_col$Cond, "POBp",
+                                         ifelse(cohort_2$Cond %in% POBm_col$Cond, "POBm","NA"))))
+cohort_2 <- cohort_2[order(cohort_2$Status, cohort_2$group,cohort_2$Patnr), ] %>%
+  mutate(NO =  rep(1:6,(4*2)))
+
+cohort_2 <- cohort_2 %>% 
+  mutate(C = str_sub(Status,1,1))
+
+# select samples to use
+df.pairs <- phase2.female.counts %>% 
+  dplyr::select(contains(select_sample))
+df.pairs <- df.pairs[, cohort_2$Cond]
+```
+
+```{r}
+coldata <- data.frame(
+sample = cohort_2$Cond,
+condition = cohort_2$C, 
+group = cohort_2$group,
+condition2 = paste(as.character(cohort_2$group),as.character(cohort_2$C), sep="."),
+ID = paste(as.character(cohort_2$group),cohort_2$NO, sep="."),
+row.names = "sample" )
+```
+
+```{r}
+design <- model.matrix(~ 0 + condition2, coldata)
+```
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = df.pairs, colData = coldata, design = design)
+
+```
+
+```{r}
+dds <- DESeq(dds)
+```
+
+```{r}
+# Heatmap of the count matrix
+library("pheatmap")
+select <- order(rowMeans(counts(dds,normalized=TRUE)),
+                decreasing=TRUE)[1:20]
+df <- as.data.frame(colData(dds)[,c("condition","group")])
+ntd <- normTransform(dds)
+pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
+         cluster_cols=FALSE, annotation_col=df)
+```
+
+# Heatmap of the sample-to-sample distances
+```{r}
+vsd <- vst(dds, blind=FALSE)
+sampleDists <- dist(t(assay(vsd)))
+library("RColorBrewer")
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- paste(vsd$condition, vsd$group, sep="-")
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+```
+
+
+```{r}
+pcaData <- plotPCA(vsd, intgroup=c("condition", "group"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+ggplot(pcaData, aes(PC1, PC2, shape=condition, color=group)) +
+  geom_point(size=3) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  coord_fixed()
+```
+
+```{r}
+# insuline responce gene for NO
+res_OB = results(dds, contrast=list(c("condition2OB.f"),  c("condition2OB.h")))
+res_OB<- res_OB[order(res_OB$padj),]
+```
+
+```{r}
+# insuline responce gene for NO
+res_NO = results(dds, contrast=list(c("condition2NO.f"),  c("condition2NO.h")))
+res_NO<- res_NO[order(res_NO$padj),]
+```
+
+```{r}
+# insuline responce gene for NO
+res_POBm = results(dds, contrast=list(c("condition2POBm.f"),  c("condition2POBm.h")))
+res_POBm<- res_POBm[order(res_POBm$padj),]
+res_POBm
+```
+
+```{r}
+# insuline responce gene for NO
+res_POBp = results(dds, contrast=list(c("condition2POBp.f"),  c("condition2POBp.h")))
+res_POBp<- res_POBp[order(res_POBp$padj),]
+res_POBp
+```
+
+```{r}
+rld <- rlog( dds )
+library( "genefilter" )
+topVarGenes <- head( order( rowVars( assay(rld) ), decreasing=TRUE ), 35 )
+heatmap.2( assay(rld)[ topVarGenes, ], scale="row", 
+     trace="none", dendrogram="column", 
+     col = colorRampPalette( rev(brewer.pal(9, "RdBu")) )(255),
+     ColSideColors = c( Control="gray", DPN="darkgreen", OHT="orange" )[
+        colData(rld)$treatment ] )
+
+```

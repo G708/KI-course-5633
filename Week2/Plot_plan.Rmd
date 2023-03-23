@@ -30,12 +30,19 @@ Q2. Dose 7 enriched TF has same activity ratio though the target?
 
 -> This analysis may not be find difference because correlation of the insulin responce gene profile between groups in FigureS2 shows correlation.
 
+```{r}
+library(tidyverse)
+```
+
 # Q1
 ```{r}
+load("~/work/data/ExpressionTables.RData")
 clinic <- read_tsv("~/work/data/ClinicalTable Cell Reports.txt")
 ```
 
 ## indivisual difference between OB vs POB
+### pre-preparation
+
 Add W/H value which is also one of the score to varidate obisity.
 ```{r}
 clinic$wh <- clinic$Waist / clinic$Hip 
@@ -43,46 +50,571 @@ clinic$wh <- clinic$Waist / clinic$Hip
 
 get person ID to get match of person.
 ```{r}
-
 clinic$ID <- substr(clinic$Patnr, start = 3, stop = nchar(clinic$Patnr))
 clinic$Location <- substr(clinic$Patnr, start = 1, stop = 2)
-
 ```
 
-
+get the sample ID in expression count matrix.
 ```{r}
-clinic %>%
+
+CAGE_ID <- grep("f0", colnames(phase2.female.counts), value=TRUE)
+CAGE_ID <- unlist(strsplit(CAGE_ID, "f0"))
+CAGE_ID
+```
+
+filter Male data, NO group, row with NA data.
+```{r}
+filterd <- clinic %>%
+  filter(Patnr %in% CAGE_ID) %>% 
   filter(!Gender == "M") %>% 
   filter(Location == "NO") %>% 
-  drop_na() %>%
-  group_by(Type) %>%
-  count()
+  group_by(Type)
+```
+
+This matrix is wide format. It will be more easy to handle long format. 
+Column will be ID, name of the value, value of OB, value of POB, OB - POB.
+```{r}
+OB_long <- filter(filterd, Type=="OBESE") %>%
+  pivot_longer(cols = c("BMI", "wh", "Syst_BT", "Diast_BT", "P_glukos", "Kol", "TG", "Ins", "HDL", "M_v_rde_60_120", "cellvol"), names_to = "score", values_to = "OB") %>% 
+  dplyr::select(!c(Time, Gender,Waist, Hip,Age, Location))
+
+POB_long <- filter(filterd, Type=="POST_OBESE") %>%
+  pivot_longer(cols = c("BMI", "wh", "Syst_BT", "Diast_BT", "P_glukos", "Kol", "TG", "Ins", "HDL", "M_v_rde_60_120", "cellvol"), names_to = "score", values_to = "POB") %>% 
+ dplyr::select(!c(Time, Gender,Waist, Hip,Age, Location))
+
+
+
+
+merged_matrix <- merge(OB_long, POB_long, by = c("ID", "score", "Patnr"), all = TRUE)
+merged_matrix$OB_POB <- merged_matrix$OB - merged_matrix$POB 
+merged_matrix$OB_POB_ratio_100 <- merged_matrix$POB / merged_matrix$OB * 100 - 100
+merged_matrix$OB_POB_ratio <- log2(merged_matrix$POB / merged_matrix$OB)
+
+
+head(merged_matrix)
+```
+
+
+Check parson is N = 23.
+```{r}
+length(unique(merged_matrix$ID))
+```
+
+### Check which score shows how much difference from OB to POB.
+
+Boxplot of distribution of the score which is difference between OB and POB (OB -POB). Cellvol is high range conpare to other scores.
+```{r}
+p <- ggplot(merged_matrix,aes(x=score, y=OB_POB)) +
+  geom_boxplot() + 
+  geom_point()
+#  facet_wrap(~score, ncol=4)
+print(p)
+```
+
+Separatery plot ranking bar plot to see the distribution.
+```{r}
+p <- ggplot(merged_matrix, aes(x = fct_reorder(score, OB_POB_ratio, .fun = median), y=OB_POB_ratio)) +
+  geom_boxplot() + 
+  geom_point() +
+  labs(title = "Change of clinical status from OB to POB", x="clinical collected scores", y = "log2(POB/OB)")
+print(p)
+```
+
+Score which decrease in POB:
+- cell volume 
+- Insulin level
+- TG 
+- BMI
+- Kol
+ 
+Score which increase in POB:
+- HDL
+- M value
+
+POB decrease the scores those un-healthy if it is high score, and increase the scores those healthy if it is high score.
+
+### Clinic measurement change
+Plot of "Change of clinical status from OB to POB" shows ratio of the change from OB to POB. This plot may not show the importance for the measurement which even small differences are important such as blood pressure. In order to visualize the actual changes, boxplot that relates the corresponding individual data are shown.
+
+
+
+```{r}
+longer <- merged_matrix %>% 
+  pivot_longer(cols = c("OB", "POB"), names_to = "states", values_to = "value")
+longer
+```
+
+
+#FIXME: 
+better to plot using violine plot.
+
+
+```{r}
+for (i in unique(longer$score)) { # Loop over loop.vector
+
+  # store data in column.i as x
+  sub_df <- longer %>%
+    dplyr::filter(score == i)
+  
+  # Plot histogram of x
+  p <- ggplot(sub_df, aes(x = interaction(states, score), y = value)) +
+    geom_boxplot(aes(fill = states), alpha = 0.5) +
+    geom_line(aes(group = interaction(ID, score)),
+            alpha = 0.5, colour = "darkgrey") +
+    scale_x_discrete(labels = "") + 
+    labs(title = paste0("Change of clinical status from OB to POB: ", i), x="states", y = i)
+  
+  show(p)
+}
+```
+
+
+```{r}
+ggplot(longer, aes(x = interaction(states, score), y = value)) +
+  geom_boxplot(aes(fill = states), alpha = 0.5) +
+  geom_line(aes(group = interaction(ID, score)),
+            alpha = 0.5, colour = "darkgrey") +
+  facet_grid(~score,scales="free_x") +
+  scale_x_discrete(labels = "")
+```
+
+### Dose those change correlates?
+
+Next see the correlation between those scores.
+
+```{r}
+pob_ob <- pivot_wider(merged_matrix, id_cols = ID, names_from = score, values_from=OB_POB_ratio) %>% 
+  drop_na()%>%
+  select_if(is.numeric) %>%
+  cor()
+```
+
+Diast blood tension and Syst blood tention is highly correlated. BMI and cellvol is correlated, and TG and HDl is negatively correlated.
+# FIXME:
+notmalize or standarize.
+
+```{r}
+library(pheatmap)
+pheatmap(pob_ob, display_numbers=TRUE)
+```
+
+# Dose there subpopulation?
+
+```{r}
+features <- pivot_wider(merged_matrix, id_cols = ID, names_from = score, values_from=OB_POB_ratio) %>% 
+  select_if(is.numeric)  %>%
+  drop_na()
+```
+
+
+```{r}
+pca_res <- prcomp(t(features), scale. = TRUE)
+pca_res
+```
+
+it is hard to say there is a sub-group in 23 (19 after drop na) individual.
+#FIXME: Check contribution
+
+```{r}
+library(ggfortify)
+autoplot(pca_res, data = t(features))
+```
+
+
+### create subgroup
+- cell volume
+- Insuline
+- M-value
+
+
+```{r}
+get_sorted <- function(df, feature){
+  base <- df %>% filter(score == feature) %>% 
+    drop_na() %>%
+    arrange(OB_POB_ratio)
+    
+  return(base)
+  
+}
+
+n = 6
+```
+
+
+```{r}
+CV <- get_sorted(merged_matrix, "cellvol")
+CV_head <- head(CV, n)
+CV_tail <- tail(CV, n)
+```
+
+```{r}
+Ins <- get_sorted(merged_matrix, "Ins")
+Ins_head <- head(Ins, n)
+Ins_tail <- tail(Ins, n)
+```
+
+```{r}
+MV <- get_sorted(merged_matrix, "M_v_rde_60_120")
+MV_head <- head(MV, n)
+MV_tail <- tail(MV, n)
+```
+
+
+### Is there overlap between groups?
+Change of those values are different in individual. This infomation is also able to assumed by correlation result. Those scores has less correlated means, change of scores are different amoung individuals.
+
+```{r}
+library(ggVennDiagram)
+x <- list(CV_cure=CV_head$Patnr, Ins_cure=Ins_head$Patnr, MV_cure=MV_tail$Patnr)
+ggVennDiagram(x, show_intersect=TRUE)
+```
+
+```{r}
+x <- list(CV_less=CV_tail$Patnr, Ins_less=Ins_tail$Patnr, MV_less=MV_head$Patnr)
+ggVennDiagram(x, show_intersect=TRUE)
+```
+
+
+### Insuline responde gene of those subgroup.
+Insuline respond subgroup based on Insuline level.
+
+
+```{r}
+cols_to_select <- Ins_head$Patnr
+selected_cols <- phase2.female.counts %>%
+  dplyr::select(contains(cols_to_select))
+
+selected_cols
 ```
 
 
 
 ```{r}
-p <- ggplot(clinic,aes(x=Type, y=BMI, color = Type)) +
-  geom_boxplot(aes(color = Type)) + 
-  geom_point(aes(color = Type)) + 
-  geom_line(aes(group=interaction(Type,ID))) +
-  facet_wrap(~Gender, ncol=2)
-print(p)
+load("/home/rstudio/work/data/ExpressionTables.RData")
+load("/home/rstudio/work/data/Annotation.RData")
+load("/home/rstudio/work/data/Cohort.RData")
+
+cohort_2 <- cohort %>%
+  dplyr::filter(Patnr %in% cols_to_select)
+
+
+```
+
+
+
+```{r}
+library(edgeR)
+##################################
+# DE analysis of paired samples
+###################################
+cohort <- cohort_2
+
+IDs<-paste(cohort$OB_NO,as.factor(cohort$IDs),sep=".")
+Condition<-cohort$newcond2
+
+# deviding expression matrix to subgroup
+df.pairs <- selected_cols
+
+# DE Analysis
+y <- DGEList(counts=df.pairs,group = Condition)
+```
+
+
+```{r}
+y
 ```
 
 ```{r}
-p <- ggplot(clinic,aes(x=Type, y=wh, color = Type)) +
-  geom_boxplot(aes(color = Type)) + 
-  geom_point(aes(color = Type)) + 
-  facet_wrap(~Gender, ncol=2)
-print(p)
+design <- model.matrix(~0+Condition+IDs,data=y$samples)
+design <- design[,!grepl("f0", colnames(design))]
+design <- design[, colSums(design != 0) > 0]
+
 ```
 
-Dimention reduction.
+
+```{R}
+colnames(design)<-make.names(colnames(design))
+y <- calcNormFactors(y,norm.method="RLE")
+y <- estimateDisp(y,design)
+fit <- glmFit(y,design,robust=T)
+
+my.contrasts<-makeContrasts(
+  HivsF.OB=ConditionOBESE.h0,
+  HivsF.POB=ConditionOBESE.h2-ConditionOBESE.f2,
+  levels=design)
+```
+
+
 ```{r}
-p <- ggplot(clinic,aes(x=Type, y=wh, color = Type)) +
-  geom_boxplot(aes(color = Type)) + 
-  geom_point(aes(color = Type)) + 
-  facet_wrap(~Gender, ncol=2)
-print(p)
+contrasts<-colnames(my.contrasts)
+myfun <- function(filex) {
+  print(filex)
+  lrt <- glmLRT(fit, contrast=my.contrasts[,filex])
+  out.top=topTags(lrt,n=Inf,adjust.method='BH')
+  out.adj=out.top$table
+  out.adj.1<-out.adj
+  if(nrow(out.adj.1)==0){
+    return()
+  }else{
+    out.adj.1$Contrast<-filex
+    out.adj.1$TC<-rownames(out.adj.1)
+    out.adj.1$updown<-ifelse(out.adj.1$logFC>0,"up","down")
+    return(out.adj.1)
+  }
+}
+```
+
+```{r}
+y.list<-(lapply(contrasts, myfun))
+tab<-do.call(rbind, y.list)
+tab$Sign<-ifelse(tab$FDR<0.05,"sign","no")
+res.count <- table(tab[tab$Sign=="sign",]$Contrast,tab[tab$Sign=="sign",]$updown )
+res.count 
+```
+
+
+
+### Chage the design
+
+edgeR result before has 441 down regulated gene. This is not seems right. It is because design matrix is not propary setted.
+
+What I want to see is different insuline response gene between + group (well cured) and - group (mild cured).
+It means, POB is not one but separated to 2.
+
+- OB (n=6): OB_f vs OB_hi
+- POB+ (n=6): POB+_f vs POB+_hi
+- POB- (n=6): POB-_f vs POB-_hi
+- NO (n=6): NO_f vs NO_hi
+
+NO will be also matched with Age, M-value and BMI mean of POB+ and POB-.
+
+```{r}
+Age_df <- data.frame(POBp = POBp$Age, POBm = POBm$Age)
+ggplot(data = Age_df) +
+  geom_point()
+  
+```
+
+
+First get matched NO groups.
+```{r}
+# get NO with matched distribution with POB+ and POB-
+set.seed(123)
+
+POBp <- clinic %>% 
+    dplyr::filter(Patnr %in% Ins_head$Patnr)
+  
+POBm <- clinic %>% 
+    dplyr::filter(Patnr %in% Ins_tail$Patnr)
+  
+NOs <- clinic %>% dplyr::filter(Type =="NO")
+select_NO <- NOs %>%
+    dplyr::filter(max(POBp$Age) > Age,  Age> min(POBp$Age)) %>%
+    dplyr::filter(max(POBp$BMI) > BMI,  BMI> min(POBp$BMI)) %>%
+    dplyr::filter(max(POBp$M_v_rde_60_120) > M_v_rde_60_120,  M_v_rde_60_120> min(POBp$M_v_rde_60_120)) %>%
+    dplyr::filter(Patnr %in% cohort$Patnr) %>%
+    sample_n(6)
+```
+
+
+Also select 6 of OB (each 3 from POB+, POB- matched OB).
+```{r}
+
+OBp_ID <- sample(Ins_head$Patnr, 3)
+OBm_ID <- sample(Ins_tail$Patnr, 3)
+OB_ID <- c(OBp_ID, OBm_ID)
+```
+
+
+```{r}
+# Data to run edgeR
+print(OB_ID) # OB group
+print(select_NO$Patnr) # NO group
+print(Ins_head$Patnr) # POB+ group
+print(Ins_tail$Patnr) # POB- group
+
+```
+
+```{r}
+# column names in the count matrix
+OB_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "OB") %>%
+  dplyr::filter(Patnr %in% OB_ID) %>%
+  select(Cond)
+
+
+NO_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "NO") %>%
+  dplyr::filter(Patnr %in% select_NO$Patnr) %>%
+  select(Cond)
+
+POBp_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "POB") %>%
+  dplyr::filter(Patnr %in% Ins_head$Patnr) %>%
+  select(Cond)
+
+
+POBm_col <- cohort %>%
+  dplyr::filter(OB_NO_POB == "POB") %>%
+  dplyr::filter(Patnr %in% Ins_tail$Patnr) %>%
+  select(Cond)
+
+``` 
+
+
+```{r}
+select_sample <- c(OB_col$Cond, NO_col$Cond, POBp_col$Cond, POBm_col$Cond)
+# select samples to use
+df.pairs <- phase2.female.counts %>% 
+     dplyr::select(contains(select_sample))
+
+
+load("/home/rstudio/work/data/Cohort.RData")
+# subset cohort file
+cohort_2 <- cohort %>%
+  dplyr::filter(Cond %in% select_sample)
+
+cohort <- cohort_2
+cohort$condition <- ifelse(cohort$Cond %in% OB_col$Cond, "OB", 
+                           ifelse(cohort$Cond %in% NO_col$Cond, "NO", 
+                                  ifelse(cohort$Cond %in% POBp_col$Cond, "POBp",
+                                         ifelse(cohort$Cond %in% POBm_col$Cond, "POBm","NA"))))
+
+cohort <- cohort %>% 
+  mutate(time = str_sub(Cond,-2,-1))
+cohort <- cohort %>% 
+  mutate(condition2 = paste(cohort$condition, cohort$time,sep="."))
+
+IDs<-paste(cohort$OB_NO,as.factor(cohort$IDs),sep=".") # put same ID for same indivisual
+Condition<-cohort$condition2
+```
+
+
+```{r}
+# DE Analysis
+y <- DGEList(counts=df.pairs,group = Condition)
+
+```
+
+```{r}
+# design: Condition (OB,NO,POBp,POBm) and indivisual
+design<-model.matrix(~0+Condition+IDs,data=y$samples)
+```
+
+```{r}
+design <- design[,!grepl("f0", colnames(design))]
+design<-design[, colSums(design != 0) > 0]
+colnames(design)<-make.names(colnames(design))
+y <- calcNormFactors(y,norm.method="RLE")
+
+```
+
+```{r}
+y <- estimateDisp(y,design)
+fit <- glmFit(y,design,robust=T)
+```
+
+
+```{r}
+my.contrasts<-makeContrasts(
+  HivsF.NO=ConditionNO.h0,
+  HivsF.OB=ConditionOB.h0,
+  HivsF.POBp=ConditionPOBp.h2-ConditionPOBp.f2,
+  HivsF.POBm=ConditionPOBm.h2-ConditionPOBm.f2,
+  levels=design)
+
+contrasts<-colnames(my.contrasts)
+myfun <- function(filex) {
+  print(filex)
+  lrt <- glmLRT(fit, contrast=my.contrasts[,filex])
+  out.top=topTags(lrt,n=Inf,adjust.method='BH')
+  out.adj=out.top$table
+  out.adj.1<-out.adj
+  if(nrow(out.adj.1)==0){
+    return()
+  }else{
+    out.adj.1$Contrast<-filex
+    out.adj.1$TC<-rownames(out.adj.1)
+    out.adj.1$updown<-ifelse(out.adj.1$logFC>0,"up","down")
+    return(out.adj.1)
+  }
+}
+
+y.list<-(lapply(contrasts, myfun))
+tab<-do.call(rbind, y.list)
+tab$Sign<-ifelse(tab$FDR<0.05,"sign","no")
+res.count <- table(tab[tab$Sign=="sign",]$Contrast,tab[tab$Sign=="sign",]$updown )
+res.count 
+
+save(tab,file="/home/rstudio/work/data/OB6_NO6_POBp6_POBm6.RData")
+
+```
+Remove NO
+
+```{r}
+select_sample <- c(OB_col$Cond, POBp_col$Cond, POBm_col$Cond)
+# select samples to use
+df.pairs <- phase2.female.counts %>% 
+     dplyr::select(contains(select_sample))
+
+
+load("/home/rstudio/work/data/Cohort.RData")
+# subset cohort file
+cohort_2 <- cohort %>%
+  dplyr::filter(Cond %in% select_sample)
+
+cohort <- cohort_2
+cohort$condition <- ifelse(cohort$Cond %in% OB_col$Cond, "OB", 
+                                  ifelse(cohort$Cond %in% POBp_col$Cond, "POBp",
+                                         ifelse(cohort$Cond %in% POBm_col$Cond, "POBm","NA")))
+
+cohort <- cohort %>% 
+  mutate(time = str_sub(Cond,-2,-1))
+cohort <- cohort %>% 
+  mutate(condition2 = paste(cohort$condition, cohort$time,sep="."))
+
+IDs<-paste(cohort$OB_NO,as.factor(cohort$IDs),sep=".") # put same ID for same indivisual
+Condition<-cohort$condition2
+
+
+y <- DGEList(counts=df.pairs,group = Condition)
+design<-model.matrix(~0+Condition+IDs,data=y$samples)
+design <- design[,!grepl("f0", colnames(design))]
+design<-design[, colSums(design != 0) > 0]
+colnames(design)<-make.names(colnames(design))
+y <- calcNormFactors(y,norm.method="RLE")
+
+y <- estimateDisp(y,design)
+fit <- glmFit(y,design,robust=T)
+
+my.contrasts<-makeContrasts(
+  HivsF.OB=ConditionOB.h0,
+  HivsF.POBp=ConditionPOBp.h2-ConditionPOBp.f2,
+  HivsF.POBm=ConditionPOBm.h2-ConditionPOBm.f2,
+  levels=design)
+
+contrasts<-colnames(my.contrasts)
+myfun <- function(filex) {
+  print(filex)
+  lrt <- glmLRT(fit, contrast=my.contrasts[,filex])
+  out.top=topTags(lrt,n=Inf,adjust.method='BH')
+  out.adj=out.top$table
+  out.adj.1<-out.adj
+  if(nrow(out.adj.1)==0){
+    return()
+  }else{
+    out.adj.1$Contrast<-filex
+    out.adj.1$TC<-rownames(out.adj.1)
+    out.adj.1$updown<-ifelse(out.adj.1$logFC>0,"up","down")
+    return(out.adj.1)
+  }
+}
+
+y.list<-(lapply(contrasts, myfun))
+tab<-do.call(rbind, y.list)
+tab$Sign<-ifelse(tab$FDR<0.05,"sign","no")
+res.count <- table(tab[tab$Sign=="sign",]$Contrast,tab[tab$Sign=="sign",]$updown )
+res.count 
+
+save(tab,file="/home/rstudio/work/data/OB6_POBp6_POBm6.RData")
 ```
